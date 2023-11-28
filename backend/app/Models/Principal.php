@@ -15,4 +15,9 @@ class Principal extends Model
      * @var array
      */
     protected $fillable = ['tconst', 'nconst', 'category', 'job', 'characters', 'img_url_asset'];
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class, 'nconst');
+    }
 }
