@@ -29,4 +29,9 @@ class Person extends Model
      * @var array
      */
     protected $fillable = ['primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles', 'img_url_asset'];
+
+    public function principals()
+    {
+        return $this->hasMany(Principal::class, 'nconst');
+    }
 }

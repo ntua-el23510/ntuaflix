@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Api\NameObject;
 use App\Http\Api\TitleObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Response as FacadesResponse;
@@ -12,12 +13,13 @@ class BaseController
     public function sendResponse(string $format = 'json', mixed $data, $statusCode = Response::HTTP_OK)
     {
         if ($format === 'json') {
-            if ($data instanceof TitleObject) {
+            if ($data instanceof TitleObject || $data instanceof NameObject) {
                 $objectToArray = $data->toArray();
             } else {
-                $objectToArray = array_map(function ($item) {
-                    return $item->toArray();
-                }, $data);
+                $objectToArray = [];
+                foreach ($data as $item) {
+                    $objectToArray[] = $item->toArray();
+                }
             }
             return response()->json($objectToArray, Response::HTTP_OK);
         } else if ($format === 'csv') {

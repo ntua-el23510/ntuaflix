@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchTitleRequest extends FormRequest
+class SearchContributorNameRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class SearchTitleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titlePart' => 'required|string|min:1|max:256',
+            'nqueryObject' => 'required|string|min:1|max:256'
         ];
     }
 }
