@@ -15,28 +15,24 @@ class GetTitleController extends BaseController
     /**
      * @OA\Get (
      * path="/title/{title_id}",
+     * operationId="getMovieByTitle",
+     * tags={"Media"},
      * summary="Get by title",
-     * description="URL from provider, get access token",
-     * operationId="providerAccess",
-     * tags={"Authentication"},
-     * @OA\RequestBody(
-     *    required=true,
-     *    description="Pass provider name",
-     *    @OA\JsonContent(
-     *       required={"provider name"},
-     *       @OA\Property(property="provider_name", type="string", example="github"),
-     *    ),
-     * ),
+     * description="Get movie information",
+     * @OA\Parameter(
+     *          name="id",
+     *          description="Project id",
+     *          required=true,
+     *          in="path"
+     *      ),
      * @OA\Response(
-     *    response=422,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-     *        )
-     *     )
-     * )
+     *          response=200,
+     *          description="successful operation"
+     *       ),
+     * @OA\Response(response=400, description="Bad request"),
+     * @OA\Response(response=404, description="Resource Not Found"),
      */
-    public function getByTitle(Request $request, $id)
+    public function getByTitle(Request $request, string $id)
     {
         $movie = Movie::findOrFail($id);
 

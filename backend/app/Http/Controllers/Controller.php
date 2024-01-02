@@ -9,15 +9,11 @@ use Illuminate\Routing\Controller as BaseController;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Filmweeb API Documentation",
- *      description="Description of available endpoints of Filmweeb API",
+ *      title="NTUAFLIX API Documentation",
+ *      description="Description of available endpoints of ntuaflix API",
  *      @OA\Contact(
- *          email="admin@admin.com"
+ *          email="el23510@mail.ntua.gr"
  *      ),
- *      @OA\License(
- *          name="Apache 2.0",
- *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
- *      )
  * )
  *
  * @OA\Server(

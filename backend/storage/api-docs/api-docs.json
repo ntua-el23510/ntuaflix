@@ -1,14 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Filmweeb API Documentation",
-        "description": "Description of available endpoints of Filmweeb API",
+        "title": "NTUAFLIX API Documentation",
+        "description": "Description of available endpoints of ntuaflix API",
         "contact": {
-            "email": "admin@admin.com"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "email": "el23510@mail.ntua.gr"
         },
         "version": "1.0.0"
     },
