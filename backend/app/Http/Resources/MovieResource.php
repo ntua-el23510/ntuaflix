@@ -27,7 +27,8 @@ class MovieResource extends JsonResource
             "img_url_asset" => $this->img_url_asset,
             "rating" => $this->whenLoaded('rating'),
             "principals" => $this->whenLoaded('principals'),
-            "alternativeTitles" => $this->whenLoaded('alternativeTitles')
+            "alternativeTitles" => $this->whenLoaded('alternativeTitles'),
+            "reviews" => $this->whenLoaded('reviews'),
         ];
     }
 }

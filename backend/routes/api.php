@@ -6,6 +6,7 @@ use App\Http\Controllers\GetTitleController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\SearchContributorNameController;
 use App\Http\Controllers\SearchTitleController;
+use App\Http\Controllers\UserAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,12 +26,19 @@ Route::prefix('ntuaflix_api')->group(function () {
         Route::get('/movies/get-started-movies', 'getStartedMovies');
         Route::get('/movies/{movie}', 'getMovieById');
     });
+    Route::controller(UserAuthController::class)->prefix('auth')->group(function () {
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+    });
     Route::get('title/{title_id}', [GetTitleController::class, 'getByTitle']);
     Route::get('/searchtitle', SearchTitleController::class);
     Route::get('/bygenre', ByGenreTitleController::class);
     Route::get('/name/{name_id}', GetContributorByNameController::class);
     Route::get('/searchname', SearchContributorNameController::class);
 });
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('ntuaflix_api')->middleware('auth:sanctum')->group(function () {
+    Route::controller(UserAuthController::class)->prefix('auth')->group(function () {
+        Route::post('/logout', 'logout');
+    });
+    Route::post('/movies/{movie}/add-rating', [MovieController::class, 'addRating']);
 });
