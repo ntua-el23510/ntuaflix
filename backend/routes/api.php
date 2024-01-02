@@ -3,6 +3,7 @@
 use App\Http\Controllers\ByGenreTitleController;
 use App\Http\Controllers\GetContributorByNameController;
 use App\Http\Controllers\GetTitleController;
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\SearchContributorNameController;
 use App\Http\Controllers\SearchTitleController;
 use Illuminate\Http\Request;
@@ -20,6 +21,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('ntuaflix_api')->group(function () {
+    Route::controller(MovieController::class)->group(function () {
+        Route::get('/movies/get-started-movies', 'getStartedMovies');
+        Route::get('/movies/{movie}', 'getMovieById');
+    });
     Route::get('title/{title_id}', [GetTitleController::class, 'getByTitle']);
     Route::get('/searchtitle', SearchTitleController::class);
     Route::get('/bygenre', ByGenreTitleController::class);

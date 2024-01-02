@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Movie extends Model
@@ -31,5 +32,15 @@ class Movie extends Model
     public function rating(): HasOne
     {
         return $this->hasOne(Rating::class, 'tconst');
+    }
+
+    public function principals(): HasMany
+    {
+        return $this->hasMany(Principal::class, 'tconst');
+    }
+
+    public function alternativeTitles(): HasMany
+    {
+        return $this->hasMany(MovieAka::class, 'titleId');
     }
 }
