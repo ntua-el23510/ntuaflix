@@ -14,11 +14,56 @@ class MovieController extends Controller
     {
     }
 
+    /**
+     * @OA\Get(
+     *     path="/movies/get-started-movies",
+     *     tags={"Media"},
+     *     summary="Get list of movies",
+     *     description="Returns a 10 random movies",
+     *     operationId="getRandomMovies",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *     )
+     * )
+     *
+     * @param MovieCollection $movies
+     */
     public function getStartedMovies()
     {
-        return new MovieCollection(Movie::with('rating')->inRandomOrder()->limit(10)->get());
+        return new MovieCollection(Movie::with('rating')->whereNotNull('img_url_asset')->inRandomOrder()->limit(10)->get());
     }
 
+    /**
+     * @OA\Get(
+     *     path="/movies/{movie}",
+     *     tags={"Media"},
+     *     summary="Find movie by ID",
+     *     description="Returns a single movie",
+     *     operationId="getMovieById",
+     *     @OA\Parameter(
+     *         name="movie",
+     *         in="path",
+     *         description="ID of movie to return",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/Movie"),
+     *         @OA\XmlContent(ref="#/components/schemas/Movie"),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Movie not found"
+     *     )
+     * )
+     *
+     * @param int $id
+     */
     public function getMovieById(Movie $movie)
     {
         return new MovieResource($movie->loadMissing(['rating', 'principals.person', 'alternativeTitles', 'reviews']));

@@ -26,7 +26,7 @@ class UserAuthController extends Controller
         return response()->json([
             'message' => 'User Created ',
             'data' => $user,
-        ]);
+        ], 201);
     }
 
     public function login(Request $request)
@@ -36,12 +36,12 @@ class UserAuthController extends Controller
             'password' => 'required|min:8',
         ]);
         $user = User::where('email', $loginUserData['email'])->first();
-        if (! $user || ! Hash::check($loginUserData['password'], $user->password)) {
+        if (!$user || !Hash::check($loginUserData['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid Credentials',
             ], Response::HTTP_UNAUTHORIZED);
         }
-        $token = $user->createToken($user->name.'-AuthToken')->plainTextToken;
+        $token = $user->createToken($user->name . '-AuthToken')->plainTextToken;
 
         return response()->json([
             'token' => $token,

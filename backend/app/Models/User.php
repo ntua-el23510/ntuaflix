@@ -10,6 +10,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Class User.
+ *
+ * @OA\Schema(
+ *     description="User model",
+ *     title="User model",
+ *     required={"name", "email", "password"},
+ *     @OA\Xml(
+ *         name="User"
+ *     )
+ * )
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -59,4 +71,42 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Movie::class, 'movie_user', 'user_id', 'movie_id')->wherePivot('status', ToWatchStatusEnum::TOWATCH->value)->withTimestamps();
     }
+
+    /**
+     * @OA\Property(
+     *     format="int64",
+     *     description="ID",
+     *     title="ID",
+     * )
+     *
+     * @var int
+     */
+    private int $id;
+    /**
+     * @OA\Property(
+     *     description="name",
+     *     title="name",
+     * )
+     *
+     * @var string
+     */
+    private string $name;
+    /**
+     * @OA\Property(
+     *     description="email",
+     *     title="email",
+     * )
+     *
+     * @var string
+     */
+    private string $email;
+    /**
+     * @OA\Property(
+     *     description="password",
+     *     title="password",
+     * )
+     *
+     * @var string
+     */
+    private string $password;
 }

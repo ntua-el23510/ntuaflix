@@ -9,12 +9,6 @@ use Illuminate\Http\Request;
 
 class SearchTitleController extends Controller
 {
-    // public function __construct(private TitleObject $titleObject)
-    // {
-    // }
-    /**
-     * Handle the incoming request.
-     */
     public function __invoke(SearchTitleRequest $request)
     {
         $request->validated();

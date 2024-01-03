@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class SearchContributorNameController extends BaseController
 {
-    /**
-     * Handle the incoming request.
-     */
     public function __invoke(SearchContributorNameRequest $request)
     {
         $request->validated();

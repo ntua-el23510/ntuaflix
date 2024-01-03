@@ -14,7 +14,31 @@ use Illuminate\Http\Request;
 class SearchBarController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * @OA\Get(
+     *     path="/searchbar",
+     *     summary="Searchbar",
+     *     description="Search Media, People and Principals",
+     *     operationId="searchbar",
+     *     @OA\Parameter(
+     *         name="searchPart",
+     *         in="query",
+     *         description="Searching for movies, people, principals based on typed phrase",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         @OA\MediaType(mediaType="application/json"),
+     *         response=200,
+     *         description="Successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     ),
+     * )
      */
     public function __invoke(SearchBarRequest $request)
     {
