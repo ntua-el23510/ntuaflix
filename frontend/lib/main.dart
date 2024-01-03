@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
 import 'package:ntuaflix/shared/cubits/intl_cubit.dart';
 import 'package:ntuaflix/shared/cubits/theme_mode_cubit.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
@@ -11,6 +12,9 @@ import 'package:url_strategy/url_strategy.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
+
+  /// Load user
+  await AuthBloc.loadinitialState();
 
   /// Load language
   await IntlCubit.prepareLanguage();
@@ -32,6 +36,10 @@ class App extends StatelessWidget {
         BlocProvider(
           lazy: false,
           create: (context) => IntlCubit(),
+        ),
+        BlocProvider(
+          lazy: false,
+          create: (context) => AuthBloc(),
         )
       ],
       child: BlocBuilder<ThemeModeCubit, ThemeMode>(

@@ -47,12 +47,17 @@ class AppFormBuilder extends StatelessWidget {
             initialValue: initialValue,
             onChanged: () {
               onChanged?.call();
-              var isValid = formKey.currentState?.isValid;
-              if (isValid != null) {
-                context
-                    .read<AppFormStateBloc>()
-                    .add(AppFormValidChanged(isValid));
-              }
+              Future.delayed(
+                const Duration(milliseconds: 10),
+                () {
+                  var isValid = formKey.currentState?.isValid;
+                  if (isValid != null) {
+                    context
+                        .read<AppFormStateBloc>()
+                        .add(AppFormValidChanged(isValid));
+                  }
+                },
+              );
             },
             onWillPop: onWillPop,
             skipDisabled: skipDisabled,

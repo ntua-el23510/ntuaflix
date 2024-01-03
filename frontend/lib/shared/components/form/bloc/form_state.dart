@@ -21,7 +21,9 @@ final class AppFormState extends Equatable {
 
 /// Stage class
 final class AppFormStateStage {
-  const AppFormStateStage();
+  const AppFormStateStage({this.onFinished});
+
+  final VoidCallback? onFinished;
 }
 
 final class AppFormStateStageNormal extends AppFormStateStage
@@ -41,7 +43,7 @@ final class AppFormStateStageLoading extends AppFormStateStage
 
 final class AppFormStateStageSuccess extends AppFormStateStage
     with EquatableMixin {
-  const AppFormStateStageSuccess();
+  const AppFormStateStageSuccess({super.onFinished});
 
   @override
   List<Object> get props => [3];
@@ -49,7 +51,8 @@ final class AppFormStateStageSuccess extends AppFormStateStage
 
 final class AppFormStateStageError extends AppFormStateStage
     with EquatableMixin {
-  const AppFormStateStageError();
+  const AppFormStateStageError({super.onFinished});
+
   @override
   List<Object> get props => [4];
 }

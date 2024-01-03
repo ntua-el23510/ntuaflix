@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:ntuaflix/shared/extensions/animation_extension.dart';
 
 /// Widget that provides animation of expanding a widget from invisible to full size and reversly
 ///
@@ -30,7 +31,7 @@ class _AppAnimatedExpansionState extends State<AppAnimatedExpansion>
     /// Configuration of animation and animation controller which controll visibility of body
     _animationController = AnimationController(
       value: 0,
-      duration: const Duration(milliseconds: 300),
+      duration: context.defaultAnimationDuration,
       vsync: this,
     );
     updateExpansion();

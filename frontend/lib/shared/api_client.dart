@@ -32,8 +32,10 @@ class AppAPIClient {
   set bearer(String? bearer) {
     options.headers = {
       "Accept": 'application/json',
-      "Authorization": 'Bearer $bearer'
     };
+    if (bearer != null) {
+      options.headers["Authorization"] = 'Bearer $bearer';
+    }
     _bearer = bearer;
   }
 
@@ -44,7 +46,7 @@ class AppAPIClient {
         // receiveTimeout: 5000,
         followRedirects: false,
         headers: {"Accept": 'application/json'},
-        baseUrl: "https://${AppEnv.API_URL}${AppEnv.API_SUFFIX}");
+        baseUrl: AppEnv.API_URL);
     _client = Dio(options)
       ..interceptors.add(InterceptorsWrapper(
         onError: (e, handler) async {

@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
+import 'package:ntuaflix/shared/extensions/read_or_null_extension.dart';
 import 'package:ntuaflix/views/details_page.dart';
 import 'package:ntuaflix/views/home_page.dart';
 import 'package:go_router/go_router.dart';
@@ -39,6 +41,13 @@ class AppRouter {
       GoRoute(
           path: LoginPage.route,
           name: LoginPage.route,
+          redirect: (context, state) {
+            if (context.readOrNull<AuthBloc>()?.state.runtimeType !=
+                Unauthorized) {
+              return HomePage.route;
+            }
+            return null;
+          },
           pageBuilder: (context, state) {
             return fadeTransition(state, const LoginPage());
           }),

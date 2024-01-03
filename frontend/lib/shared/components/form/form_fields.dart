@@ -13,11 +13,18 @@ import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 
 class AppFormFieldDecoration extends InputDecoration {
-  AppFormFieldDecoration(Type inputType, BuildContext context, String name,
-      Color stateColor, String? errorText, bool isFocused, bool isObligatory,
+  AppFormFieldDecoration(
+      Type inputType,
+      BuildContext context,
+      String name,
+      Color stateColor,
+      String? errorText,
+      bool isFocused,
+      bool isObligatory,
+      bool isInvalidated,
       {Widget? prefixIcon})
       : super(
-          prefixIconColor: errorText != null
+          prefixIconColor: errorText != null || isInvalidated
               ? context.theme.appColors.error
               : isFocused
                   ? context.theme.appColors.primary
@@ -29,6 +36,8 @@ class AppFormFieldDecoration extends InputDecoration {
           isCollapsed:
               [AppTextField, AppCheckbox, AppSlider].contains(inputType),
           // alignLabelWithHint: true,
+          errorStyle: context.theme.appTypos.body
+              .copyWith(color: context.theme.appColors.error, height: 1.5),
           error: errorText != null
               ? Transform.translate(
                   offset: [AppCheckbox].contains(inputType)
@@ -105,44 +114,48 @@ class AppFieldOperator<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: Opacity(
-        opacity: enabled ? 1.0 : 0.3,
-        child: StreamBuilder<bool>(
-            stream: onValidateStream,
-            initialData: false,
-            builder: (context, validate) {
-              return StreamBuilder<bool>(
-                  stream: hasFocusStream,
-                  initialData: false,
-                  builder: (context, isFocused) {
-                    if (!dirty && touched && !isFocused.data!) {
-                      dirty = true;
-                    }
-                    if (isFocused.data!) {
-                      touched = true;
-                      if (inputType == AppCheckbox) {
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: Opacity(
+          opacity: enabled ? 1.0 : 0.3,
+          child: StreamBuilder<bool>(
+              stream: onValidateStream,
+              initialData: false,
+              builder: (context, validate) {
+                return StreamBuilder<bool>(
+                    stream: hasFocusStream,
+                    initialData: false,
+                    builder: (context, isFocused) {
+                      if (!dirty && touched && !isFocused.data!) {
                         dirty = true;
                       }
-                    }
-                    return StreamBuilder<T?>(
-                        stream: currentValueStream,
-                        builder: (context, inputValue) {
-                          String? errorText = touched && dirty || validate.data!
-                              ? validator?.call(inputValue.data)
-                              : null;
-                          Color stateColor = !enabled
-                              ? context.theme.appColors.text.withOpacity(0.7)
-                              : errorText != null
-                                  ? context.theme.appColors.error
-                                  : isFocused.data!
-                                      ? context.theme.appColors.primary
-                                      : context.theme.appColors.text;
+                      if (isFocused.data!) {
+                        touched = true;
+                        if (inputType == AppCheckbox) {
+                          dirty = true;
+                        }
+                      }
+                      return StreamBuilder<T?>(
+                          stream: currentValueStream,
+                          builder: (context, inputValue) {
+                            String? errorText =
+                                touched && dirty || validate.data!
+                                    ? validator?.call(inputValue.data)
+                                    : null;
+                            Color stateColor = !enabled
+                                ? context.theme.appColors.text.withOpacity(0.7)
+                                : errorText != null
+                                    ? context.theme.appColors.error
+                                    : isFocused.data!
+                                        ? context.theme.appColors.primary
+                                        : context.theme.appColors.text;
 
-                          return builder(
-                              stateColor, errorText, isFocused.data ?? false);
-                        });
-                  });
-            }),
+                            return builder(
+                                stateColor, errorText, isFocused.data ?? false);
+                          });
+                    });
+              }),
+        ),
       ),
     );
   }
@@ -286,6 +299,7 @@ class _AppTextFieldState extends State<AppTextField> {
   final onValidate = StreamController<bool>();
   final hasFocus = StreamController<bool>();
   final currentValue = StreamController<String?>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
 
   @override
   void initState() {
@@ -316,6 +330,7 @@ class _AppTextFieldState extends State<AppTextField> {
       validator: widget.validator,
       builder: (stateColor, errorText, isFocused) {
         return FormBuilderTextField(
+          key: _fieldKey,
           name: widget.name,
           validator: widget.validator,
           decoration: widget.decoration ??
@@ -327,9 +342,13 @@ class _AppTextFieldState extends State<AppTextField> {
                   errorText,
                   isFocused,
                   widget.isObligatory,
+                  _fieldKey.currentState?.errorText != null,
                   prefixIcon: widget.prefixIcon),
           onChanged: (value) {
             widget.onChanged?.call(value);
+            if (_fieldKey.currentState?.errorText != null) {
+              _fieldKey.currentState?.validate();
+            }
             _debouncer.run(() {
               currentValue.add((value?.isEmpty ?? true) ? null : value);
             });
@@ -460,6 +479,7 @@ class AppCheckbox extends StatelessWidget {
   final onValidate = StreamController<bool>();
 
   final hasFocus = StreamController<bool>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
 
   final currentValue = StreamController<bool?>();
 
@@ -474,13 +494,21 @@ class AppCheckbox extends StatelessWidget {
         validator: validator,
         builder: (stateColor, errorText, isFocused) {
           return FormBuilderCheckbox(
-            key: key,
+            key: _fieldKey,
             name: name,
             validator: validator,
             initialValue: initialValue,
             decoration: decoration ??
-                AppFormFieldDecoration(AppCheckbox, context, name, stateColor,
-                    errorText, isFocused, isObligatory),
+                AppFormFieldDecoration(
+                  AppCheckbox,
+                  context,
+                  name,
+                  stateColor,
+                  errorText,
+                  isFocused,
+                  isObligatory,
+                  _fieldKey.currentState?.errorText != null,
+                ),
             onChanged: (value) {
               onChanged?.call(value);
               currentValue.add(value);
@@ -716,6 +744,7 @@ class _AppDateTimePickerState extends State<AppDateTimePicker> {
   final onValidate = StreamController<bool>();
   final hasFocus = StreamController<bool>();
   final currentValue = StreamController<DateTime?>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
 
   @override
   void initState() {
@@ -746,6 +775,7 @@ class _AppDateTimePickerState extends State<AppDateTimePicker> {
         validator: widget.validator,
         builder: (stateColor, errorText, isFocused) {
           return FormBuilderDateTimePicker(
+            key: _fieldKey,
             name: widget.name,
             textDirection: widget.textDirection,
             textAlign: widget.textAlign,
@@ -761,13 +791,15 @@ class _AppDateTimePickerState extends State<AppDateTimePicker> {
             currentDate: widget.currentDate,
             decoration: widget.decoration ??
                 AppFormFieldDecoration(
-                    AppTextField,
-                    context,
-                    widget.label ?? widget.name,
-                    stateColor,
-                    errorText,
-                    isFocused,
-                    widget.isObligatory),
+                  AppTextField,
+                  context,
+                  widget.label ?? widget.name,
+                  stateColor,
+                  errorText,
+                  isFocused,
+                  widget.isObligatory,
+                  _fieldKey.currentState?.errorText != null,
+                ),
             initialDatePickerMode: widget.initialDatePickerMode,
             initialEntryMode: widget.initialEntryMode,
             initialTime: widget.initialTime,
@@ -917,7 +949,8 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
   final onValidate = StreamController<bool>();
   final hasFocus = StreamController<bool>();
   final currentValue = StreamController<T?>.broadcast();
-  final textFieldKey = GlobalKey<FormBuilderFieldState>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
+
   @override
   void initState() {
     currentValue.add(widget.initialValue);
@@ -959,8 +992,16 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
             autovalidateMode: widget.autovalidateMode,
             borderRadius: widget.borderRadius,
             decoration: widget.decoration ??
-                AppFormFieldDecoration(AppDropdown, context, widget.name,
-                    stateColor, errorText, isFocused, widget.isObligatory),
+                AppFormFieldDecoration(
+                  AppDropdown,
+                  context,
+                  widget.name,
+                  stateColor,
+                  errorText,
+                  isFocused,
+                  widget.isObligatory,
+                  _fieldKey.currentState?.errorText != null,
+                ),
             disabledHint: widget.disabledHint,
             dropdownColor: widget.dropdownColor,
             elevation: widget.elevation,
@@ -976,7 +1017,7 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
                       return IconButton(
                           padding: EdgeInsets.zero,
                           onPressed: () =>
-                              textFieldKey.currentState?.didChange(null),
+                              _fieldKey.currentState?.didChange(null),
                           icon: const Icon(Icons.cancel));
                     }
                     return const Icon(Icons.arrow_drop_down);
@@ -989,7 +1030,7 @@ class _AppDropdownState<T> extends State<AppDropdown<T>> {
             isDense: widget.isDense,
             isExpanded: widget.isExpanded,
             itemHeight: widget.itemHeight,
-            key: widget.key ?? textFieldKey,
+            key: widget.key ?? _fieldKey,
             menuMaxHeight: widget.menuMaxHeight,
             onChanged: onChanged,
             onReset: widget.onReset,
@@ -1042,6 +1083,8 @@ class AppSlider extends StatelessWidget {
   final onValidate = StreamController<bool>();
   final hasFocus = StreamController<bool>();
   final currentValue = StreamController<double?>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
+
   AppSlider({
     this.key,
     required this.name,
@@ -1085,6 +1128,7 @@ class AppSlider extends StatelessWidget {
         validator: validator,
         builder: (stateColor, errorText, isFocused) {
           return FormBuilderSlider(
+            key: _fieldKey,
             name: name,
             initialValue: initialValue,
             min: min,
@@ -1093,8 +1137,16 @@ class AppSlider extends StatelessWidget {
             autofocus: autofocus,
             autovalidateMode: autovalidateMode,
             decoration: decoration ??
-                AppFormFieldDecoration(AppSlider, context, label ?? name,
-                    stateColor, errorText, isFocused, isObligatory),
+                AppFormFieldDecoration(
+                  AppSlider,
+                  context,
+                  label ?? name,
+                  stateColor,
+                  errorText,
+                  isFocused,
+                  isObligatory,
+                  _fieldKey.currentState?.errorText != null,
+                ),
             displayValues: displayValues ?? DisplayValues.current,
             divisions: divisions ?? max.toInt(),
             enabled: enabled,
@@ -1161,6 +1213,7 @@ class AppSwitch extends StatelessWidget {
   final onValidate = StreamController<bool>();
   final hasFocus = StreamController<bool>();
   final currentValue = StreamController<bool?>();
+  final _fieldKey = GlobalKey<FormBuilderFieldState>();
 
   AppSwitch({
     this.key,
@@ -1232,8 +1285,16 @@ class AppSwitch extends StatelessWidget {
             contentPadding: contentPadding,
             controlAffinity: controlAffinity ?? ListTileControlAffinity.leading,
             decoration: decoration ??
-                AppFormFieldDecoration(AppSwitch, context, name, stateColor,
-                    errorText, isFocused, true),
+                AppFormFieldDecoration(
+                  AppSwitch,
+                  context,
+                  name,
+                  stateColor,
+                  errorText,
+                  isFocused,
+                  true,
+                  _fieldKey.currentState?.errorText != null,
+                ),
             enabled: enabled,
             focusNode: focusNode,
             inactiveThumbColor:
@@ -1241,7 +1302,7 @@ class AppSwitch extends StatelessWidget {
             inactiveThumbImage: inactiveThumbImage,
             inactiveTrackColor: inactiveTrackColor ?? Colors.transparent,
             initialValue: initialValue,
-            key: key,
+            key: _fieldKey,
             onChanged: (value) {
               onChanged?.call(value);
               currentValue.add(value);

@@ -9,7 +9,5 @@ part of 'env.dart';
 // coverage:ignore-file
 // ignore_for_file: type=lint
 final class _AppEnv {
-  static const String API_URL = 'xxxxxxxxxxx';
-
-  static const String API_SUFFIX = '/api/v1';
+  static const String API_URL = 'http://192.168.2.25:8000/api/ntuaflix_api';
 }

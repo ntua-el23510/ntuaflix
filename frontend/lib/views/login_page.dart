@@ -2,17 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:ntuaflix/shared/components/animated_switcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
+import 'package:ntuaflix/shared/components/animated_expansion.dart';
 import 'package:ntuaflix/shared/components/button.dart';
 import 'package:ntuaflix/shared/components/default_view.dart';
 import 'package:ntuaflix/shared/components/form/bloc/form_state_bloc.dart';
 import 'package:ntuaflix/shared/components/form/form.dart';
 import 'package:ntuaflix/shared/components/form/form_fields.dart';
 import 'package:ntuaflix/shared/extensions/animation_extension.dart';
+import 'package:ntuaflix/shared/extensions/form_extension.dart';
 import 'package:ntuaflix/shared/extensions/read_or_null_extension.dart';
 import 'package:ntuaflix/shared/extensions/size_extension.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
 import 'package:ntuaflix/shared/responsive.dart';
+import 'package:ntuaflix/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -77,11 +81,11 @@ class _LoginPageState extends State<LoginPage> {
           /// Form widget
           var formWidget = Container(
             padding: isDisplayOverlay
-                ? const EdgeInsets.all(16)
+                ? const EdgeInsets.all(32)
                 : const EdgeInsets.only(right: 100),
             decoration: BoxDecoration(
                 color: context.theme.appColors.background
-                    .withOpacity(isDisplayOverlay ? 0.95 : 1),
+                    .withOpacity(isDisplayOverlay ? 0.92 : 1),
                 boxShadow: [
                   if (!isDisplayOverlay)
                     BoxShadow(
@@ -146,20 +150,17 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(
                         height: 20,
                       ),
-                      AppAnimatedSwitcher(
-                          firstChild: Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: AppTextField(
-                              name: "name",
-                              label: "Nickname",
-                              prefixIcon: const Icon(Icons.person_outline),
-                              validator: (string) => !isLogin
-                                  ? InputValidators.isNotNull(string)
-                                  : null,
-                            ),
-                          ),
-                          secondChild: const SizedBox.shrink(),
-                          isFirst: !isLogin),
+                      AppAnimatedExpansion(
+                          isOpened: !isLogin,
+                          child: AppTextField(
+                            name: "name",
+                            label: "Nickname",
+                            expands: false,
+                            prefixIcon: const Icon(Icons.person_outline),
+                            validator: (string) => !isLogin
+                                ? InputValidators.isNotNull(string)
+                                : null,
+                          )),
                       AppTextField(
                         name: "email",
                         label: "E-mail",
@@ -167,29 +168,56 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (string) =>
                             InputValidators.isValidEmail(string),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       AppTextField(
                         name: "password",
                         label: "Password",
                         prefixIcon: const Icon(Icons.key_outlined),
                         obscureText: true,
                         validator: (string) =>
-                            InputValidators.isNotNull(string),
-                      ),
-                      const SizedBox(
-                        height: 20,
+                            InputValidators.isNotNull(string) ??
+                            InputValidators.minLength(string, 8),
                       ),
                       Center(
                         child: AppButton(
                           text: "Submit",
                           onPressed: () {
-                            print(formKey.currentState?.instantValue);
-                            formKey.currentState?.context
-                                .readOrNull<AppFormStateBloc>()
-                                ?.add(AppFormStageChanged(
-                                    const AppFormStateStageLoading()));
+                            formKey.setLoading();
+                            var values = formKey.getValues;
+                            if (isLogin) {
+                              context.readOrNull<AuthBloc>()?.add(Login(
+                                    email: values?["email"],
+                                    password: values?["password"],
+                                    onSuccess: () {
+                                      formKey.setSuccess(
+                                        onSuccess: () {
+                                          context.goNamed(HomePage.route);
+                                        },
+                                      );
+                                    },
+                                    onError: (_) {
+                                      formKey.setError();
+                                    },
+                                  ));
+                            } else {
+                              context.readOrNull<AuthBloc>()?.add(Register(
+                                    nickname: values?["name"],
+                                    email: values?["email"],
+                                    password: values?["password"],
+                                    formKey: formKey,
+                                    onSuccess: () {
+                                      formKey.setSuccess(
+                                        onSuccess: () {
+                                          setState(() {
+                                            isLogin = true;
+                                          });
+                                        },
+                                      );
+                                    },
+                                    onError: (value) {
+                                      formKey.setError();
+                                    },
+                                  ));
+                            }
                           },
                         ),
                       )
