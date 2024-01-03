@@ -17,9 +17,11 @@ class AppFormFieldDecoration extends InputDecoration {
       Color stateColor, String? errorText, bool isFocused, bool isObligatory,
       {Widget? prefixIcon})
       : super(
-          prefixIconColor: isFocused
-              ? context.theme.appColors.primary
-              : context.theme.appColors.text.withOpacity(0.6),
+          prefixIconColor: errorText != null
+              ? context.theme.appColors.error
+              : isFocused
+                  ? context.theme.appColors.primary
+                  : context.theme.appColors.text.withOpacity(0.6),
           hintText: name, prefixIcon: prefixIcon,
           contentPadding: const EdgeInsets.all(10),
           floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -45,33 +47,33 @@ class AppFormFieldDecoration extends InputDecoration {
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                      color: context.theme.appColors.primary, width: 1))
+                      color: context.theme.appColors.primary, width: 1.5))
               : null,
           enabledBorder: [AppTextField, AppDropdown].contains(inputType)
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
                       color: context.theme.appColors.text.withOpacity(0.6),
-                      width: 1))
+                      width: 1.5))
               : null,
           disabledBorder: [AppTextField, AppDropdown].contains(inputType)
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
                       color: context.theme.appColors.text.withOpacity(0.7),
-                      width: 1))
+                      width: 1.5))
               : null,
           errorBorder: [AppTextField, AppDropdown].contains(inputType)
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                      color: context.theme.appColors.error, width: 1))
+                      color: context.theme.appColors.error, width: 1.5))
               : null,
           focusedErrorBorder: [AppTextField, AppDropdown].contains(inputType)
               ? OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                      color: context.theme.appColors.error, width: 1))
+                      color: context.theme.appColors.error, width: 1.5))
               : null,
         );
 }
@@ -103,48 +105,44 @@ class AppFieldOperator<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Opacity(
-          opacity: enabled ? 1.0 : 0.3,
-          child: StreamBuilder<bool>(
-              stream: onValidateStream,
-              initialData: false,
-              builder: (context, validate) {
-                return StreamBuilder<bool>(
-                    stream: hasFocusStream,
-                    initialData: false,
-                    builder: (context, isFocused) {
-                      if (!dirty && touched && !isFocused.data!) {
+      child: Opacity(
+        opacity: enabled ? 1.0 : 0.3,
+        child: StreamBuilder<bool>(
+            stream: onValidateStream,
+            initialData: false,
+            builder: (context, validate) {
+              return StreamBuilder<bool>(
+                  stream: hasFocusStream,
+                  initialData: false,
+                  builder: (context, isFocused) {
+                    if (!dirty && touched && !isFocused.data!) {
+                      dirty = true;
+                    }
+                    if (isFocused.data!) {
+                      touched = true;
+                      if (inputType == AppCheckbox) {
                         dirty = true;
                       }
-                      if (isFocused.data!) {
-                        touched = true;
-                        if (inputType == AppCheckbox) {
-                          dirty = true;
-                        }
-                      }
-                      return StreamBuilder<T?>(
-                          stream: currentValueStream,
-                          builder: (context, inputValue) {
-                            String? errorText =
-                                touched && dirty || validate.data!
-                                    ? validator?.call(inputValue.data)
-                                    : null;
-                            Color stateColor = !enabled
-                                ? context.theme.appColors.text.withOpacity(0.7)
-                                : errorText != null
-                                    ? context.theme.appColors.error
-                                    : isFocused.data!
-                                        ? context.theme.appColors.primary
-                                        : context.theme.appColors.text;
+                    }
+                    return StreamBuilder<T?>(
+                        stream: currentValueStream,
+                        builder: (context, inputValue) {
+                          String? errorText = touched && dirty || validate.data!
+                              ? validator?.call(inputValue.data)
+                              : null;
+                          Color stateColor = !enabled
+                              ? context.theme.appColors.text.withOpacity(0.7)
+                              : errorText != null
+                                  ? context.theme.appColors.error
+                                  : isFocused.data!
+                                      ? context.theme.appColors.primary
+                                      : context.theme.appColors.text;
 
-                            return builder(
-                                stateColor, errorText, isFocused.data ?? false);
-                          });
-                    });
-              }),
-        ),
+                          return builder(
+                              stateColor, errorText, isFocused.data ?? false);
+                        });
+                  });
+            }),
       ),
     );
   }
@@ -153,7 +151,7 @@ class AppFieldOperator<T> extends StatelessWidget {
 class AppTextField extends StatefulWidget {
   final String name;
   final String? label;
-  final String? Function(String?)? validator;
+  final String? Function(String? string)? validator;
   final InputDecoration? decoration;
   final void Function(String?)? onChanged;
   final String? Function(String?)? valueTransformer;
@@ -361,7 +359,7 @@ class _AppTextFieldState extends State<AppTextField> {
           cursorHeight: widget.cursorHeight,
           keyboardType: widget.keyboardType,
           style: widget.style ??
-              context.theme.appTypos.input.copyWith(height: 1.65),
+              context.theme.appTypos.input.copyWith(height: 1.7),
           controller: widget.controller,
           textInputAction: widget.textInputAction,
           strutStyle: widget.strutStyle,

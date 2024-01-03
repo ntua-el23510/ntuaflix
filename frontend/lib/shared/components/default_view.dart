@@ -27,13 +27,12 @@ class AppDefaultView extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 65,
           leadingWidth: 56,
-          automaticallyImplyLeading: true,
           leading: !context.canPop() || !canGoBack
               ? Container(
                   width: 56,
                 )
               : null,
-          backgroundColor: context.theme.appColors.secondary.withAlpha(255),
+          backgroundColor: context.theme.appColors.secondary,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

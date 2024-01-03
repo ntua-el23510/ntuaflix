@@ -13,15 +13,15 @@ Map<String, dynamic>? _loadedKeyValues;
 class IntlCubit extends Cubit<AppLocale> {
   IntlCubit()
       : super(_currentLanguage ??
-            getLocaleByCountryCode("pl_PL") ??
+            getLocaleByCountryCode("en_US") ??
             _availableLanguages.first) {
     loadLanguage(state);
   }
 
   /// Available languages to choose from
   static final List<AppLocale> _availableLanguages = [
-    AppLocale(name: "Polski", countryCode: "pl_PL"),
     AppLocale(name: "English", countryCode: "en_US"),
+    AppLocale(name: "Polski", countryCode: "pl_PL"),
   ];
 
   /// Funtion that load prefered theme from local storage and set it to current active
