@@ -16,8 +16,17 @@ class Principal extends Model
      */
     protected $fillable = ['tconst', 'nconst', 'category', 'job', 'characters', 'img_url_asset'];
 
+    protected $casts = [
+        'characters' => 'array'
+    ];
+
     public function person()
     {
         return $this->belongsTo(Person::class, 'nconst');
+    }
+
+    public function movie()
+    {
+        return $this->belongsTo(Movie::class, 'tconst');
     }
 }

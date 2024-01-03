@@ -4,11 +4,13 @@ use App\Http\Controllers\ByGenreTitleController;
 use App\Http\Controllers\GetContributorByNameController;
 use App\Http\Controllers\GetTitleController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\PersonController;
+use App\Http\Controllers\PrincipalController;
+use App\Http\Controllers\SearchBarController;
 use App\Http\Controllers\SearchContributorNameController;
 use App\Http\Controllers\SearchTitleController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +25,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('ntuaflix_api')->group(function () {
+    Route::get('/searchbar', SearchBarController::class);
+    Route::get('/people/{person}', [PersonController::class, 'show']);
+    Route::get('/principals/{principal}', [PrincipalController::class, 'show']);
     Route::controller(MovieController::class)->group(function () {
         Route::get('/movies/get-started-movies', 'getStartedMovies');
         Route::get('/movies/{movie}', 'getMovieById');
