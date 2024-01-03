@@ -17,7 +17,7 @@ class Principal extends Model
     protected $fillable = ['tconst', 'nconst', 'category', 'job', 'characters', 'img_url_asset'];
 
     protected $casts = [
-        'characters' => 'array'
+        'characters' => 'array',
     ];
 
     public function person()

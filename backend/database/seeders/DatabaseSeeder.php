@@ -32,8 +32,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_name.basics.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 Person::updateOrCreate([
                     'nconst' => $data[0],
                 ], [
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
                     'deathYear' => $data[3] ? $data[3] : null,
                     'primaryProfession' => $data[4],
                     'knownForTitles' => $data[5],
-                    'img_url_asset' => $data[6]
+                    'img_url_asset' => $data[6],
                 ]);
             }
             $transRow = false;
@@ -55,8 +55,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_title.basics.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 Movie::updateOrCreate([
                     'tconst' => $data[0],
                 ], [
@@ -81,8 +81,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_title.akas.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 MovieAka::updateOrCreate([
                     'titleId' => $data[0],
                     'ordering' => $data[1],
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
                     'language' => $data[4] ? $data[4] : null,
                     'types' => $data[5] ? $data[5] : null,
                     'attributes' => $data[6] ? $data[6] : null,
-                    'isOriginalTitle' => $data[7]
+                    'isOriginalTitle' => $data[7],
                 ]);
             }
             $transRow = false;
@@ -105,8 +105,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_title.crew.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 Crew::updateOrCreate([
                     'tconst' => $data[0],
                 ], [
@@ -125,8 +125,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_title.ratings.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 Rating::updateOrCreate([
                     'tconst' => $data[0],
                 ], [
@@ -145,8 +145,8 @@ class DatabaseSeeder extends Seeder
         $csvData = fopen(base_path('database/seeders/data/truncated_title.principals.tsv'), 'r');
 
         $transRow = true;
-        while (($data = fgetcsv($csvData, 0, "\t")) !== FALSE) {
-            if (!$transRow) {
+        while (($data = fgetcsv($csvData, 0, "\t")) !== false) {
+            if (! $transRow) {
                 Principal::updateOrCreate([
                     'tconst' => $data[0],
                     'nconst' => $data[2],

@@ -29,6 +29,7 @@ class ByGenreTitleController extends BaseController
         foreach ($builder->get() as $movie) {
             $result[] = new TitleObject($movie->tconst);
         }
+
         return $this->sendResponse($request->format, $result);
     }
 }

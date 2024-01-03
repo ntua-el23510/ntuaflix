@@ -27,6 +27,7 @@ class SearchTitleController extends Controller
         foreach ($searchedMedia as $movie) {
             // $result[] = $this->titleObject->prepareData($movie->tconst);
         }
-        return  $result;
+
+        return $result;
     }
 }

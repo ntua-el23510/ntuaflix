@@ -25,7 +25,7 @@ class AssignMovieStatusRequest extends FormRequest
     {
         return [
             'movie_id' => 'required|string|exists:movies,tconst',
-            'status' => ['required', new Enum(ToWatchStatusEnum::class)]
+            'status' => ['required', new Enum(ToWatchStatusEnum::class)],
         ];
     }
 }

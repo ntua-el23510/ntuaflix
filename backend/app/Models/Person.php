@@ -17,13 +17,13 @@ class Person extends Model
      * @var string
      */
     protected $primaryKey = 'nconst';
+
     /**
      * The "type" of the auto-incrementing ID.
      *
      * @var string
      */
     protected $keyType = 'string';
-
 
     /**
      * @var array

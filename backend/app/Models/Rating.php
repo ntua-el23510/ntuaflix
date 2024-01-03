@@ -17,6 +17,6 @@ class Rating extends Model
     protected $fillable = ['tconst', 'averageRating', 'numVotes'];
 
     protected $casts = [
-        'averageRating' => 'decimal:2'
+        'averageRating' => 'decimal:2',
     ];
 }

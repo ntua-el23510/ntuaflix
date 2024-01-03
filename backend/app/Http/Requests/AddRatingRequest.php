@@ -23,7 +23,7 @@ class AddRatingRequest extends FormRequest
     {
         return [
             'rating' => 'required|integer|min:1|max:10',
-            'review' => 'sometimes|string|max:255'
+            'review' => 'sometimes|string|max:255',
         ];
     }
 }

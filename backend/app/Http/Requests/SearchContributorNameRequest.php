@@ -22,7 +22,7 @@ class SearchContributorNameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nqueryObject' => 'required|string|min:1|max:256'
+            'nqueryObject' => 'required|string|min:1|max:256',
         ];
     }
 }

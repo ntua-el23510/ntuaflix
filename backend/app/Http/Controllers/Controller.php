@@ -11,6 +11,7 @@ use Illuminate\Routing\Controller as BaseController;
  *      version="1.0.0",
  *      title="NTUAFLIX API Documentation",
  *      description="Description of available endpoints of ntuaflix API",
+ *
  *      @OA\Contact(
  *          email="el23510@mail.ntua.gr"
  *      ),

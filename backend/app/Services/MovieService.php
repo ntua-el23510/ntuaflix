@@ -12,25 +12,25 @@ class MovieService
         $rating = $movie->rating;
 
         $oldAverage = $rating->averageRating;
-        $numVotes = $rating->numVotes;  # Liczba głosów przed dodaniem nowego wyniku
+        $numVotes = $rating->numVotes;  // Liczba głosów przed dodaniem nowego wyniku
 
-        # Obliczenia
+        // Obliczenia
         $voteTotal = $oldAverage * $numVotes;
         $newVoteTotal = $ratingData['rating'] + $voteTotal;
         $neNumVotes = $numVotes + 1;
 
-        # Nowa średnia
+        // Nowa średnia
         $newAverage = $newVoteTotal / $neNumVotes;
 
         $rating->update([
             'averageRating' => $newAverage,
-            'numVotes' => $numVotes
+            'numVotes' => $numVotes,
         ]);
 
-        if (!empty($ratingData['review'])) {
+        if (! empty($ratingData['review'])) {
             $movie->reviews()->create([
                 'rating' => $ratingData['rating'],
-                'review' => $ratingData['review']
+                'review' => $ratingData['review'],
             ]);
         }
     }

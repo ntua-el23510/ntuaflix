@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchBarRequest;
-use App\Http\Requests\SearchTitleRequest;
 use App\Http\Resources\MovieCollection;
 use App\Http\Resources\PersonCollection;
 use App\Http\Resources\PrincipalCollection;
@@ -39,7 +38,7 @@ class SearchBarController extends Controller
             [
                 'movies' => new MovieCollection($searchedMedia),
                 'people' => new PersonCollection($searchedPeople),
-                'principals' => new PrincipalCollection($searchedPrincipals)
+                'principals' => new PrincipalCollection($searchedPrincipals),
 
             ]
         );

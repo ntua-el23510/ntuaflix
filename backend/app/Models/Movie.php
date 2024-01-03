@@ -10,13 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Movie extends Model
 {
     use HasFactory;
+
     public $timestamps = false;
+
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
     protected $primaryKey = 'tconst';
+
     /**
      * The "type" of the auto-incrementing ID.
      *

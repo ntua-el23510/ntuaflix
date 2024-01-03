@@ -1,26 +1,25 @@
 <?php
 
-use App\Http\Api\TitleObject;
-use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
-if (!function_exists('stringToObject')) {
+if (! function_exists('stringToObject')) {
     /**
      * This function uploads files to the filesystem of your choice
-     * @param \Illuminate\Http\UploadedFile $file The File to Upload
-     * @param string|null $filename The file name
-     * @param string|null $folder A specific folder where the file will be stored
-     * @param string $disk Your preferred Storage location(s3,public,gcs etc)
+     *
+     * @param  \Illuminate\Http\UploadedFile  $file The File to Upload
+     * @param  string|null  $filename The file name
+     * @param  string|null  $folder A specific folder where the file will be stored
+     * @param  string  $disk Your preferred Storage location(s3,public,gcs etc)
      */
-
     function UploadFile(UploadedFile $file, $folder = null, $filename = null, $disk = 's3')
     {
         $name = is_null($filename) ? $filename : Str::random(10);
 
         return $file->storeAs(
             $folder,
-            $name . "." . $file->getClientOriginalExtension(),
+            $name.'.'.$file->getClientOriginalExtension(),
             $disk
         );
     }
@@ -30,12 +29,13 @@ if (!function_exists('stringToObject')) {
         $inputToArray = explode(',', $input);
         for ($i = 0; $i < count($inputToArray); $i++) {
             $genreTitle = $inputToArray[$i];
-            $result[] = array($key => $genreTitle);
+            $result[] = [$key => $genreTitle];
         }
+
         return $result;
     }
 }
-if (!function_exists('objectToString')) {
+if (! function_exists('objectToString')) {
     function objectToString(array $input): array
     {
         $result = [];
@@ -45,27 +45,28 @@ if (!function_exists('objectToString')) {
             }
             if (is_string($item)) {
                 $result[$key] = $item;
-            } else if (is_array($item)) {
+            } elseif (is_array($item)) {
                 if (hasNestedArray($item)) {
-                    $csvString = "";
+                    $csvString = '';
                     foreach ($item as $genre) {
                         foreach ($genre as $key => $value) {
-                            $csvString .= $key . ',' . $value . '|';
+                            $csvString .= $key.','.$value.'|';
                         }
                     }
                     // Usunięcie ostatniego znaku '|'
                     $result[$key] = rtrim($csvString, '|');
                 } else {
-                    $csvString = "";
+                    $csvString = '';
                     foreach ($item as $key => $value) {
-                        $csvString .= $key . ',' . $value . '|';
+                        $csvString .= $key.','.$value.'|';
                     }
                     $result[$key] = rtrim($csvString, '|');
                 }
-            } else if (is_null($item)) {
+            } elseif (is_null($item)) {
                 $result[$key] = null;
             }
         }
+
         return $result;
     }
 

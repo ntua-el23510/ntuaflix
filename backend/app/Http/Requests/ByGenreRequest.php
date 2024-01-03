@@ -16,31 +16,32 @@ class ByGenreRequest extends FormRequest
     }
 
     private array $genres = [
-        "Short",
-        "Animation",
-        "Horror",
-        "Documentary",
-        "Drama",
-        "Crime",
-        "Musical",
-        "Family",
-        "Action",
-        "Comedy",
-        "Fantasy",
-        "Western",
-        "Sci-Fi",
-        "Thriller",
-        "Romance",
-        "Music",
-        "Sport",
-        "Adult",
-        "Mystery",
-        "War",
-        "Adventure",
-        "Biography",
-        "History",
-        "News"
+        'Short',
+        'Animation',
+        'Horror',
+        'Documentary',
+        'Drama',
+        'Crime',
+        'Musical',
+        'Family',
+        'Action',
+        'Comedy',
+        'Fantasy',
+        'Western',
+        'Sci-Fi',
+        'Thriller',
+        'Romance',
+        'Music',
+        'Sport',
+        'Adult',
+        'Mystery',
+        'War',
+        'Adventure',
+        'Biography',
+        'History',
+        'News',
     ];
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -51,8 +52,8 @@ class ByGenreRequest extends FormRequest
         return [
             'qgenre' => ['required', 'string', Rule::in($this->genres)],
             'minrating' => 'required|numeric|min:0',
-            'yrFrom' => 'sometimes|digits:4|integer|min:1900|max:' . (date('Y') + 1),
-            'yrTo' => 'sometimes|digits:4|integer|min:1900|max:' . (date('Y') + 1)
+            'yrFrom' => 'sometimes|digits:4|integer|min:1900|max:'.(date('Y') + 1),
+            'yrTo' => 'sometimes|digits:4|integer|min:1900|max:'.(date('Y') + 1),
         ];
     }
 }

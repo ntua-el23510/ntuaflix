@@ -11,14 +11,23 @@ use Illuminate\Support\Collection;
 class TitleObject
 {
     private string $titleID;
+
     private string $type;
+
     private string $originalTitle;
+
     private ?string $titlePoster;
+
     private string $startYear;
+
     private ?string $endYear;
+
     private array $genres;
+
     private Collection $titleAkas;
+
     private Collection $principals;
+
     private array $rating;
 
     public function __construct(string $id)
@@ -38,20 +47,20 @@ class TitleObject
             'titleAkas' => $aka->map(function ($item) {
                 return [
                     'akaTitle' => $item->title,
-                    'regionAbbrev' => (string) $item->region
+                    'regionAbbrev' => (string) $item->region,
                 ];
             }),
             'principals' => $principals->map(function ($item) {
                 return [
                     'nameID' => $item->nconst,
                     'name' => $item->person->primaryName,
-                    'category' =>  $item->category
+                    'category' => $item->category,
                 ];
             }),
             'rating' => $rating ? [
                 'avRating' => $rating->averageRating ?? null,
-                'nVotes' => $rating->numVotes ? (string) $rating->numVotes : null
-            ] : null
+                'nVotes' => $rating->numVotes ? (string) $rating->numVotes : null,
+            ] : null,
         ];
         $this->titleID = $data['titleID'];
         $this->type = $data['type'];
@@ -69,18 +78,19 @@ class TitleObject
     {
         return [
             'titleID' => $this->titleID,
-            'type' =>  $this->type,
+            'type' => $this->type,
             'originalTitle' => $this->originalTitle,
             'titlePoster' => $this->titlePoster,
             'startYear' => $this->startYear,
-            'endYear' =>  $this->endYear,
+            'endYear' => $this->endYear,
             'genres' => $this->genres,
             'titleAkas' => $this->titleAkas,
             'principals' => $this->principals,
-            'rating' => $this->rating
+            'rating' => $this->rating,
         ];
     }
-    function get_titleId()
+
+    public function get_titleId()
     {
         return $this->titleID;
     }

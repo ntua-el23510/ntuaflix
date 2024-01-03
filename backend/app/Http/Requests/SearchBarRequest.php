@@ -22,7 +22,7 @@ class SearchBarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'searchPart' => 'required|string|min:3|max:20'
+            'searchPart' => 'required|string|min:3|max:20',
         ];
     }
 }

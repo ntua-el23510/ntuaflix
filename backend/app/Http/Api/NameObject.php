@@ -2,21 +2,23 @@
 
 namespace App\Http\Api;
 
-use App\Models\Movie;
-use App\Models\MovieAka;
 use App\Models\Person;
-use App\Models\Principal;
-use App\Models\Rating;
 use Illuminate\Support\Collection;
 
 class NameObject
 {
     private string $nameID;
+
     private string $name;
+
     private ?string $namePoster;
+
     private ?string $birthYr;
+
     private ?string $deathYr;
+
     private string $profession;
+
     private Collection $nameTitles;
 
     public function __construct(string $id)
@@ -32,7 +34,7 @@ class NameObject
             'nameTitles' => $person->principals->map(function ($principal) {
                 return [
                     'titleID' => $principal->tconst,
-                    'category' => $principal->category
+                    'category' => $principal->category,
                 ];
             }),
         ];

@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Api\NameObject;
 use App\Http\Api\TitleObject;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Response as FacadesResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class BaseController
 {
-    public function sendResponse(string $format = 'json', mixed $data, $statusCode = Response::HTTP_OK)
+    public function sendResponse(string $format, mixed $data, $statusCode = Response::HTTP_OK)
     {
         if ($format === 'json') {
             if ($data instanceof TitleObject || $data instanceof NameObject) {
@@ -21,16 +20,17 @@ class BaseController
                     $objectToArray[] = $item->toArray();
                 }
             }
+
             return response()->json($objectToArray, Response::HTTP_OK);
-        } else if ($format === 'csv') {
+        } elseif ($format === 'csv') {
             $csvFileName = 'movies.csv';
-            $headers = array(
-                "Content-type" => "text/csv",
-                "Content-Disposition" => "attachment; filename=$csvFileName",
-                "Pragma" => "no-cache",
-                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-                "Expires" => "0"
-            );
+            $headers = [
+                'Content-type' => 'text/csv',
+                'Content-Disposition' => "attachment; filename=$csvFileName",
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
             $handle = fopen('php://output', 'w');
 
             if ($data instanceof TitleObject) {
@@ -49,9 +49,10 @@ class BaseController
             }
 
             fclose($handle);
+
             return FacadesResponse::make(rtrim(ob_get_clean()), Response::HTTP_OK, $headers);
         } else {
-            return response(["message" => "Invalid format"], Response::HTTP_BAD_REQUEST);
+            return response(['message' => 'Invalid format'], Response::HTTP_BAD_REQUEST);
         }
     }
 }
