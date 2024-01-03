@@ -17,7 +17,7 @@ class MovieController extends Controller
     }
     public function getStartedMovies()
     {
-        return new MovieCollection(Movie::with('rating')->inRandomOrder()->limit(5)->get());
+        return new MovieCollection(Movie::with('rating')->inRandomOrder()->limit(10)->get());
     }
 
     public function getMovieById(Movie $movie)
