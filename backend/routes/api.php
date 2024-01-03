@@ -7,6 +7,7 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\SearchContributorNameController;
 use App\Http\Controllers\SearchTitleController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,10 @@ Route::prefix('ntuaflix_api')->group(function () {
 Route::prefix('ntuaflix_api')->middleware('auth:sanctum')->group(function () {
     Route::controller(UserAuthController::class)->prefix('auth')->group(function () {
         Route::post('/logout', 'logout');
+        Route::get('/user', 'user');
+    });
+    Route::controller(UserController::class)->group(function () {
+        Route::put('/user/assign-movie-status', 'assignMovieStatus');
     });
     Route::post('/movies/{movie}/add-rating', [MovieController::class, 'addRating']);
 });

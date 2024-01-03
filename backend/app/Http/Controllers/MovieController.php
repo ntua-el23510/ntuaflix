@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddRatingRequest;
+use App\Http\Requests\AssignMovieStatusRequest;
 use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;

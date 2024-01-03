@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +44,12 @@ class UserAuthController extends Controller
         return response()->json([
             'token' => $token,
         ]);
+    }
+
+    public function user(Request $request)
+    {
+        $user = User::find(auth()->id());
+        return new UserResource($user->loadMissing(['toWatchMovies', 'viewedMovies']));
     }
 
     public function logout()

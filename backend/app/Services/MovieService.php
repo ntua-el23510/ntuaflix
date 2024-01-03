@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Movie;
+use App\Models\User;
 
 class MovieService
 {
@@ -31,6 +32,17 @@ class MovieService
                 'rating' => $ratingData['rating'],
                 'review' => $ratingData['review']
             ]);
+        }
+    }
+
+    public function assignStatus(array $statusData, User $user)
+    {
+        if ($user->userMoviesList()->wherePivot('movie_id', $statusData['movie_id'])->exists()) {
+            $user->userMoviesList()->updateExistingPivot($statusData['movie_id'], [
+                'status' => $statusData['status'],
+            ]);
+        } else {
+            $user->userMoviesList()->attach($statusData['movie_id'], ['status' => $statusData['status']]);
         }
     }
 }
