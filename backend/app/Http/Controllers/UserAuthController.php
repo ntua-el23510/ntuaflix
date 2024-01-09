@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserAuthController extends Controller
 {
+
     public function register(Request $request)
     {
         $registerUserData = $request->validate([
@@ -24,11 +25,34 @@ class UserAuthController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User Created ',
+            'message' => 'User Created',
             'data' => $user,
         ], 201);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/auth/login",
+     *     summary="Authenticate user and generate Sanctum token",
+     *      tags={"Auth"},
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="User's email",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="User's password",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(response="200", description="Login successful"),
+     *     @OA\Response(response="401", description="Invalid credentials")
+     * )
+     */
     public function login(Request $request)
     {
         $loginUserData = $request->validate([
