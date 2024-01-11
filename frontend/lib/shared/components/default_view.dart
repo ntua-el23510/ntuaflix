@@ -32,6 +32,7 @@ class AppDefaultView extends StatelessWidget {
     return Scaffold(
         backgroundColor: context.theme.appColors.background,
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           toolbarHeight: switch (context.responsiveSize) {
             AppResizableSize.DESKTOP => 65,
             AppResizableSize.TABLET => 150,

@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
               ignoring: true,
               child: PageView.builder(
                 controller: _pageController,
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   final imagePath = imagePaths[index % imagePaths.length];
                   return Image.asset(
