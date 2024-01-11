@@ -5,7 +5,7 @@ import 'package:ntuaflix/shared/extensions/typography_extension.dart';
 class AppTheme {
   /// Colors
   static const primary = Color(0xFFFFC700);
-  static const secondary = Color(0xFF000B27);
+  static const secondary = Color(0xFF01184E);
   static const error = Color(0xFFB11F14);
   static const success = Color(0xFF128B22);
 

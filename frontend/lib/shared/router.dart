@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
 import 'package:ntuaflix/shared/extensions/read_or_null_extension.dart';
+import 'package:ntuaflix/shared/models/movie.dart';
 import 'package:ntuaflix/views/details_page.dart';
 import 'package:ntuaflix/views/home_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntuaflix/views/login_page.dart';
+import 'package:ntuaflix/views/movie_page.dart';
 
 /// Global keys for different [Navigator]s in widget stack
 final rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -34,6 +36,24 @@ class AppRouter {
                 name: SearchPage.route,
                 pageBuilder: (context, state) {
                   return fadeTransition(state, const SearchPage());
+                }),
+
+            /// Movies
+            GoRoute(
+                path: MoviePage.route,
+                name: MoviePage.route,
+                pageBuilder: (context, state) {
+                  var movie = state.extra as Movie?;
+                  var pId = state.pathParameters['id'];
+                  if (pId == null) {
+                    return fadeTransition(state, const HomePage());
+                  }
+                  return fadeTransition(
+                      state,
+                      MoviePage(
+                        movieId: pId,
+                        movie: movie,
+                      ));
                 }),
           ]),
 

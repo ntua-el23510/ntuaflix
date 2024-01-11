@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ntuaflix/shared/models/principal.dart';
+
 class Movie {
   String tconst;
   String titleType;
@@ -11,6 +13,7 @@ class Movie {
   String? genres;
   String? imgUrlAsset;
   double? rating;
+  List<Principal>? principals;
 
   Movie({
     required this.tconst,
@@ -23,6 +26,7 @@ class Movie {
     required this.genres,
     required this.imgUrlAsset,
     required this.rating,
+    required this.principals,
   });
 
   factory Movie.fromRawJson(String str) => Movie.fromJson(json.decode(str));
@@ -37,6 +41,11 @@ class Movie {
         runtimeMinutes: json["runtimeMinutes"],
         genres: json["genres"],
         imgUrlAsset: json["img_url_asset"],
+        principals: json['principals'] != null
+            ? List<Principal>.from((json['principals'] as Iterable?)
+                    ?.map((model) => Principal.fromMap(model)) ??
+                List<Principal>.empty(growable: true))
+            : null,
         rating: double.tryParse(json["rating"]["averageRating"]),
       );
 }

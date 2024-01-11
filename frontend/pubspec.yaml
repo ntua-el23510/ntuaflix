@@ -50,6 +50,8 @@ dependencies:
   bloc: ^8.1.2
   meta: ^1.10.0
   flutter_svg: ^2.0.9
+  flutter_rating_bar: ^4.0.1
+  palette_generator: ^0.3.3+3
 
 dev_dependencies:
   flutter_test:

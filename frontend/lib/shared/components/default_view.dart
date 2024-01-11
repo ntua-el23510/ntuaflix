@@ -44,7 +44,7 @@ class AppDefaultView extends StatelessWidget {
                   width: 40,
                 )
               : null,
-          backgroundColor: context.theme.appColors.secondary,
+          backgroundColor: context.theme.appColors.secondary.withOpacity(0.5),
           title: Builder(builder: (context) {
             var children = [
               MouseRegion(
