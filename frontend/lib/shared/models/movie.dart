@@ -29,9 +29,9 @@ class Movie {
     required this.principals,
   });
 
-  factory Movie.fromRawJson(String str) => Movie.fromJson(json.decode(str));
+  factory Movie.fromJson(String str) => Movie.fromMap(json.decode(str));
 
-  factory Movie.fromJson(Map<String, dynamic> json) => Movie(
+  factory Movie.fromMap(Map<String, dynamic> json) => Movie(
         tconst: json["tconst"],
         titleType: json["titleType"],
         primaryTitle: json["primaryTitle"],
@@ -46,6 +46,9 @@ class Movie {
                     ?.map((model) => Principal.fromMap(model)) ??
                 List<Principal>.empty(growable: true))
             : null,
-        rating: double.tryParse(json["rating"]["averageRating"]),
+        rating:
+            json["rating"] != null && json["rating"]["averageRating"] != null
+                ? double.tryParse(json["rating"]["averageRating"])
+                : null,
       );
 }

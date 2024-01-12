@@ -32,7 +32,7 @@ class _MoviePageState extends State<MoviePage> {
   Future<Movie> loadMovie() async {
     if (_detailedMovie != null) return _detailedMovie!;
     var response = await AppAPIClient().client.get("/movies/${widget.movieId}");
-    Movie movie = Movie.fromJson((response.data["data"] as dynamic));
+    Movie movie = Movie.fromMap((response.data["data"] as dynamic));
     _detailedMovie = movie;
     return movie;
   }

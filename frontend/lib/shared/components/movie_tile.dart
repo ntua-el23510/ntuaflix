@@ -32,25 +32,24 @@ class MovieTile extends StatelessWidget {
                   tag: "movie:${movie.tconst}",
                   child: Container(
                     decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              blurRadius: 50,
-                              spreadRadius: 10,
-                              offset: const Offset(5, 5))
-                        ],
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                            color: context.theme.appColors.primary, width: 2),
-                        image: movie.imgUrlAsset != null
-                            ? DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(movie.imgUrlAsset!
-                                    .replaceAll("{width_variable}", "w500")))
-                            : const DecorationImage(
-                                fit: BoxFit.cover,
-                                image: AssetImage(
-                                    "assets/images/placeholder.png"))),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            blurRadius: 50,
+                            spreadRadius: 10,
+                            offset: const Offset(5, 5))
+                      ],
+                      borderRadius: BorderRadius.circular(18),
+                      image: movie.imgUrlAsset != null
+                          ? DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(movie.imgUrlAsset!
+                                  .replaceAll("{width_variable}", "w500")))
+                          : const DecorationImage(
+                              fit: BoxFit.cover,
+                              image:
+                                  AssetImage("assets/images/placeholder.png")),
+                    ),
                     child: actionEnabled
                         ? TextButton(
                             style: ButtonStyle(

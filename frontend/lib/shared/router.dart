@@ -4,7 +4,7 @@ import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
 import 'package:ntuaflix/shared/extensions/read_or_null_extension.dart';
 import 'package:ntuaflix/shared/models/movie.dart';
 import 'package:ntuaflix/shared/models/person.dart';
-import 'package:ntuaflix/views/details_page.dart';
+import 'package:ntuaflix/views/search_page.dart';
 import 'package:ntuaflix/views/home_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ntuaflix/views/login_page.dart';

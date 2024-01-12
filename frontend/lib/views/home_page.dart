@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
     var response =
         await AppAPIClient().client.get("/movies/get-started-movies");
     return (response.data["data"] as List<dynamic>)
-        .map((e) => Movie.fromJson(e))
+        .map((e) => Movie.fromMap(e))
         .toList();
   }
 

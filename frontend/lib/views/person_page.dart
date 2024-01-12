@@ -206,7 +206,7 @@ class _PersonPageState extends State<PersonPage> {
                                 var response = await AppAPIClient()
                                     .client
                                     .get("/movies/${e.tconst}");
-                                Movie movie = Movie.fromJson(
+                                Movie movie = Movie.fromMap(
                                     (response.data["data"] as dynamic));
                                 return movie;
                               }

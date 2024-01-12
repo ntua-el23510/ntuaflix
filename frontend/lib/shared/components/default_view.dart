@@ -11,7 +11,7 @@ import 'package:ntuaflix/shared/extensions/size_extension.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
 import 'package:ntuaflix/shared/icons.dart';
 import 'package:ntuaflix/shared/responsive.dart';
-import 'package:ntuaflix/views/details_page.dart';
+import 'package:ntuaflix/views/search_page.dart';
 import 'package:ntuaflix/views/home_page.dart';
 import 'package:ntuaflix/views/login_page.dart';
 
