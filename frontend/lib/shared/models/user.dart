@@ -1,3 +1,5 @@
+import 'package:ntuaflix/shared/models/movie.dart';
+
 class User {
   User({
     required this.ID,
@@ -10,8 +12,8 @@ class User {
   final String name;
   final String email;
   String? token;
-  final List<dynamic> toWatchMovies;
-  final List<dynamic> viewedMovies;
+  final List<Movie> toWatchMovies;
+  final List<Movie> viewedMovies;
 
   set setToken(String newToken) {
     token = newToken;
@@ -23,8 +25,14 @@ class User {
         ID: json["id"],
         name: json["name"],
         email: json["email"],
-        toWatchMovies: List.from(json["to_watch_movies"]),
-        viewedMovies: List.from(json["viewed_movies"]));
+        toWatchMovies: json["to_watch_movies"] != null
+            ? List<Movie>.from((json["to_watch_movies"] as Iterable)
+                .map((x) => Movie.fromMap(x)))
+            : List<Movie>.empty(growable: true),
+        viewedMovies: json["viewed_movies"] != null
+            ? List<Movie>.from((json["viewed_movies"] as Iterable)
+                .map((x) => Movie.fromMap(x)))
+            : List<Movie>.empty(growable: true));
   }
 
   /// Function that converts object to JSON object
@@ -32,8 +40,8 @@ class User {
         'id': ID,
         'name': name,
         'email': email,
-        'to_watch_movies': toWatchMovies,
-        'viewed_movies': viewedMovies,
+        'to_watch_movies': null,
+        'viewed_movies': null,
         'token': token,
       };
 }

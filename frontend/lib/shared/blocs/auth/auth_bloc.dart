@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
@@ -21,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<Register>(_onRegister);
     on<Login>(_onLogin);
     on<Logout>(_onLogout);
+    on<UpdateUser>(_onUpdateUser);
   }
 
   /// Function that loads user and bearer token if these are stored in local storage
@@ -28,11 +30,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     /// Obtain shared preferences
     final prefs = await SharedPreferences.getInstance();
     var userString = prefs.getString('user');
+    var token = prefs.getString('token');
     if (userString != null) {
       Map<String, dynamic> json = jsonDecode(userString);
-      User user = (User.fromJson(json)..setToken = json['token']);
-      AppAPIClient().bearer = user.token;
-      initialState = Authorized(await getUserData());
+
+      User user = (User.fromJson(json));
+      if (token != null) {
+        user.setToken = token;
+        AppAPIClient().bearer = user.token;
+        initialState = Authorized(await getUserData());
+      } else {
+        initialState = const Unauthorized();
+      }
     }
   }
 
@@ -71,6 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ?..setToken = token;
       var prefs = await SharedPreferences.getInstance();
       await prefs.setString("user", jsonEncode(userData?.toJson()));
+      await prefs.setString("token", token);
       event.onSuccess?.call();
       await Future.delayed(
         2000.ms,
@@ -91,6 +101,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     prefs.clear();
     AppAPIClient().bearer = null;
     emit(const Unauthorized());
+    event.onSuccess?.call();
+  }
+
+  _onUpdateUser(UpdateUser event, Emitter<AuthState> emit) async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString("user", jsonEncode(event.user.toJson()));
+    emit(Authorized(event.user));
     event.onSuccess?.call();
   }
 }

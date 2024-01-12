@@ -17,5 +17,5 @@ final class Authorized extends AuthState with EquatableMixin {
   const Authorized(super.user);
 
   @override
-  List<Object> get props => [2];
+  List<Object> get props => [Random().nextInt(100)];
 }

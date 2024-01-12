@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ntuaflix/shared/api_client.dart';
+import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
+import 'package:ntuaflix/shared/components/category_divider.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
 import 'package:ntuaflix/shared/models/movie.dart';
 
@@ -44,16 +47,49 @@ class _HomePageState extends State<HomePage> {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1000),
-                  child: Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: snapshot.data
-                            ?.map((e) => MovieTile(
-                                  movie: e,
-                                  index: snapshot.data!.indexOf(e),
-                                ))
-                            .toList() ??
-                        [],
+                  child: BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (state is Authorized &&
+                              (state.user?.viewedMovies.isNotEmpty ??
+                                  false)) ...[
+                            const CategoryDivider(text: "My favorites"),
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: state.user?.viewedMovies
+                                      .map((e) => MovieTile(
+                                            movie: e,
+                                            index: state.user?.viewedMovies
+                                                    .indexOf(e) ??
+                                                0,
+                                          ))
+                                      .toList() ??
+                                  [],
+                            ),
+                          ],
+                          const CategoryDivider(text: "Recommended"),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: snapshot.data
+                                    ?.where((element) => !(state
+                                            .user?.viewedMovies
+                                            .map((e) => e.tconst)
+                                            .contains(element.tconst) ??
+                                        false))
+                                    .map((e) => MovieTile(
+                                          movie: e,
+                                          index: snapshot.data!.indexOf(e),
+                                        ))
+                                    .toList() ??
+                                [],
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

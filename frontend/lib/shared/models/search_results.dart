@@ -21,7 +21,7 @@ class SearchResults {
       SearchResults(
         movies: movies ?? this.movies,
         people: people ?? this.people,
-        searchText: searchText ?? this.searchText,
+        searchText: searchText,
       );
 
   factory SearchResults.fromJson(String str, String searchText) =>

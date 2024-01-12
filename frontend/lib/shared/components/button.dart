@@ -119,7 +119,7 @@ class AppButton extends StatelessWidget {
 
         /// If enabled color white else color grey
         return context.theme.appTypos.body
-            .copyWith(color: textColor ?? context.theme.appColors.secondary);
+            .copyWith(color: textColor ?? context.theme.appColors.background);
       case AppButtonType.ButtonInverted:
 
         /// If enabled color blue else color grey

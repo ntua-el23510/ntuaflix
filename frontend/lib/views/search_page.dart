@@ -95,6 +95,7 @@ class _SearchPageState extends State<SearchPage> {
                               ...(snapshot.data?.people ?? [])
                             ];
                             return ListView.builder(
+                              clipBehavior: Clip.none,
                               itemBuilder: (context, index) {
                                 var element = searchResultsList[index];
 

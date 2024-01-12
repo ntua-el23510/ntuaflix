@@ -2,11 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ntuaflix/shared/api_client.dart';
+import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
 import 'package:ntuaflix/shared/components/default_view.dart';
 import 'package:ntuaflix/shared/components/movie_tile.dart';
 import 'package:ntuaflix/shared/components/person_tile.dart';
+import 'package:ntuaflix/shared/models/user.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
 import 'package:ntuaflix/shared/models/movie.dart';
@@ -247,6 +250,75 @@ class _MoviePageState extends State<MoviePage> {
                                     ],
                                   ),
                                 ),
+                                BlocBuilder<AuthBloc, AuthState>(
+                                  builder: (context, state) {
+                                    if (state is Authorized) {
+                                      bool watched = state.user?.viewedMovies
+                                              .map((e) => e.tconst)
+                                              .contains(movie.tconst) ??
+                                          false;
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: ConstrainedBox(
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 300),
+                                          child: TextButton(
+                                              onPressed: () async {
+                                                var response = await AppAPIClient()
+                                                    .client
+                                                    .put(
+                                                        "/user/assign-movie-status",
+                                                        data: {
+                                                      "movie_id": movie.tconst,
+                                                      "status": watched
+                                                          ? "to_watch"
+                                                          : "viewed"
+                                                    });
+
+                                                context.read<AuthBloc>().add(
+                                                    UpdateUser(
+                                                        user: User.fromJson(
+                                                            response.data[
+                                                                "data"])));
+                                              },
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    watched
+                                                        ? Icons.favorite
+                                                        : Icons
+                                                            .favorite_outline,
+                                                    color: context.theme
+                                                        .appColors.primary,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text(
+                                                    watched
+                                                        ? "Remove from favorites"
+                                                        : "Add to favorites",
+                                                    style: context
+                                                        .theme.appTypos.body,
+                                                  )
+                                                ],
+                                              )),
+                                        ),
+                                      )
+                                          .animate()
+                                          .fadeIn(
+                                              duration: 500.ms, delay: 200.ms)
+                                          .slideY(
+                                              delay: 200.ms,
+                                              begin: 2,
+                                              duration: 400.ms,
+                                              curve: Curves.easeOutBack);
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                )
                               ],
                             ),
                           ),
