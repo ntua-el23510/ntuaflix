@@ -2,39 +2,41 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ntuaflix/shared/api_client.dart';
 import 'package:ntuaflix/shared/components/default_view.dart';
 import 'package:ntuaflix/shared/components/movie_tile.dart';
 import 'package:ntuaflix/shared/components/person_tile.dart';
+import 'package:ntuaflix/shared/extensions/string_extension.dart';
+import 'package:ntuaflix/shared/models/movie.dart';
+import 'package:ntuaflix/shared/models/person.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
-import 'package:ntuaflix/shared/models/movie.dart';
 
 import '../shared/components/category_divider.dart';
 import 'table.dart';
 
-class MoviePage extends StatefulWidget {
-  const MoviePage({
+class PersonPage extends StatefulWidget {
+  const PersonPage({
     super.key,
-    this.movie,
-    required this.movieId,
+    this.person,
+    required this.personId,
   });
-  static const String route = "movie/:id";
-  final String movieId;
-  final Movie? movie;
+  static const String route = "person/:id";
+  final String personId;
+  final Person? person;
 
   @override
-  State<MoviePage> createState() => _MoviePageState();
+  State<PersonPage> createState() => _PersonPageState();
 }
 
-class _MoviePageState extends State<MoviePage> {
-  Future<Movie> loadMovie() async {
-    if (_detailedMovie != null) return _detailedMovie!;
-    var response = await AppAPIClient().client.get("/movies/${widget.movieId}");
-    Movie movie = Movie.fromJson((response.data["data"] as dynamic));
-    _detailedMovie = movie;
-    return movie;
+class _PersonPageState extends State<PersonPage> {
+  Future<Person> loadPerson() async {
+    if (_detailedPerson != null) return _detailedPerson!;
+    var response =
+        await AppAPIClient().client.get("/people/${widget.personId}");
+    Person person = Person.fromMap((response.data["data"] as dynamic));
+    _detailedPerson = person;
+    return person;
   }
 
   // Calculate dominant color from ImageProvider
@@ -42,28 +44,19 @@ class _MoviePageState extends State<MoviePage> {
     if (imageProvider == null) return context.theme.appColors.secondary;
     final PaletteGenerator paletteGenerator =
         await PaletteGenerator.fromImageProvider(imageProvider);
-    var vibrant = paletteGenerator.vibrantColor?.color;
-    var dominant = paletteGenerator.dominantColor?.color;
-    if (vibrant != null && dominant != null) {
-      if (vibrant.computeLuminance() > dominant.computeLuminance()) {
-        return vibrant;
-      } else {
-        return dominant;
-      }
-    }
-    return vibrant ?? dominant;
+    return paletteGenerator.dominantColor?.color;
   }
 
-  Movie? _detailedMovie;
+  Person? _detailedPerson;
 
   @override
   Widget build(BuildContext context) {
     return AppDefaultView(
         body: FutureBuilder(
-      future: loadMovie(),
+      future: loadPerson(),
       builder: (context, snapshot) {
-        var movie = (_detailedMovie ?? widget.movie ?? snapshot.data);
-        if (movie == null) {
+        var person = (_detailedPerson ?? widget.person ?? snapshot.data);
+        if (person == null) {
           return Center(
             child: CircularProgressIndicator(
               color: context.theme.appColors.primary,
@@ -79,8 +72,8 @@ class _MoviePageState extends State<MoviePage> {
                 child: Column(
                   children: [
                     FutureBuilder(
-                        future: getImagePalette(movie.imgUrlAsset != null
-                            ? NetworkImage(movie.imgUrlAsset!
+                        future: getImagePalette(person.imgUrlAsset != null
+                            ? NetworkImage(person.imgUrlAsset!
                                 .replaceAll("{width_variable}", "w500"))
                             : null),
                         builder: (context, color) {
@@ -112,8 +105,8 @@ class _MoviePageState extends State<MoviePage> {
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        MovieTile(
-                          movie: widget.movie ?? snapshot.data!,
+                        PersonTile(
+                          person: widget.person ?? snapshot.data!,
                           index: 0,
                           actionEnabled: false,
                         ),
@@ -125,7 +118,7 @@ class _MoviePageState extends State<MoviePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  movie.originalTitle,
+                                  person.primaryName,
                                   style: context.theme.appTypos.title.copyWith(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold),
@@ -139,70 +132,6 @@ class _MoviePageState extends State<MoviePage> {
                                         begin: -5,
                                         duration: 400.ms,
                                         curve: Curves.easeOutBack),
-                                Builder(builder: (context) {
-                                  var rating = movie.rating ?? 0.0;
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 5.0),
-                                        child: Transform.translate(
-                                          offset: const Offset(0, 1),
-                                          child: Text(
-                                            rating.toStringAsFixed(1),
-                                            style: context.theme.appTypos.body,
-                                          )
-                                              .animate()
-                                              .fadeIn(
-                                                  duration: 500.ms,
-                                                  delay: 200.ms)
-                                              .slideY(
-                                                  delay: 200.ms,
-                                                  begin: 2,
-                                                  duration: 500.ms,
-                                                  curve: Curves.easeOutBack),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: RatingBarIndicator(
-                                            rating: rating,
-                                            itemSize: 30,
-                                            unratedColor: context
-                                                .theme.appColors.primary
-                                                .withOpacity(0.3),
-                                            itemCount: 10,
-                                            itemBuilder: (context, index) =>
-                                                Wrap(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.star,
-                                                      color: context.theme
-                                                          .appColors.primary,
-                                                    )
-                                                        .animate()
-                                                        .fadeIn(
-                                                            duration: 500.ms,
-                                                            delay: (200 +
-                                                                    index * 50)
-                                                                .ms)
-                                                        .slideY(
-                                                            delay: (200 +
-                                                                    index * 50)
-                                                                .ms,
-                                                            begin: 2,
-                                                            duration: 500.ms,
-                                                            curve: Curves
-                                                                .easeOutBack),
-                                                  ],
-                                                )),
-                                      ),
-                                    ],
-                                  );
-                                }),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 5.0),
                                   child: Table(
@@ -213,35 +142,39 @@ class _MoviePageState extends State<MoviePage> {
                                     children: [
                                       TableRow(children: [
                                         const TableTitle(
-                                          title: "Genres",
+                                          title: "Professions",
                                           index: 0,
                                         ),
                                         TableBody(
-                                          text: (movie.genres ?? "-")
-                                              .replaceAll(",", ", "),
+                                          text: person.primaryProfession
+                                              .split(",")
+                                              .map((e) => e
+                                                  .replaceAll("_", " ")
+                                                  .capitalize())
+                                              .join(", "),
                                           index: 0,
                                         )
                                       ]),
                                       TableRow(children: [
                                         const TableTitle(
-                                          title: "Year",
+                                          title: "Birth",
                                           index: 1,
                                         ),
                                         TableBody(
-                                          text: movie.startYear.toString(),
+                                          text: person.birthYear?.toString() ??
+                                              "-",
                                           index: 1,
                                         )
                                       ]),
                                       TableRow(children: [
                                         const TableTitle(
-                                          title: "Duration",
-                                          index: 2,
+                                          title: "Death",
+                                          index: 1,
                                         ),
                                         TableBody(
-                                          text: movie.runtimeMinutes != null
-                                              ? "${movie.runtimeMinutes} min"
-                                              : "-",
-                                          index: 2,
+                                          text: person.deathYear?.toString() ??
+                                              "-",
+                                          index: 1,
                                         )
                                       ]),
                                     ],
@@ -260,20 +193,43 @@ class _MoviePageState extends State<MoviePage> {
                       descriptions[Random().nextInt(descriptions.length)],
                       textAlign: TextAlign.justify,
                     ).animate().fadeIn(duration: 500.ms, delay: 700.ms),
-                    const CategoryDivider(text: "Starring")
+                    const CategoryDivider(text: "Known for titles")
                         .animate()
                         .fadeIn(duration: 500.ms, delay: 900.ms),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: movie.principals
-                              ?.map((e) => PersonTile(
-                                    person: e.person!,
-                                    index: movie.principals!.indexOf(e),
-                                  ))
-                              .toList() ??
-                          [],
-                    ).animate().fadeIn(duration: 500.ms, delay: 1100.ms)
+                    Builder(builder: (context) {
+                      // List<String> titles = person.knownForTitles.split(",");
+                      return Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: person.principals?.map((e) {
+                              Future<Movie> loadMovie() async {
+                                var response = await AppAPIClient()
+                                    .client
+                                    .get("/movies/${e.tconst}");
+                                Movie movie = Movie.fromJson(
+                                    (response.data["data"] as dynamic));
+                                return movie;
+                              }
+
+                              return FutureBuilder(
+                                future: loadMovie(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState !=
+                                      ConnectionState.done) {
+                                    return CircularProgressIndicator(
+                                      color: context.theme.appColors.primary,
+                                    );
+                                  }
+                                  return MovieTile(
+                                    index: person.principals!.indexOf(e),
+                                    movie: snapshot.data!,
+                                  );
+                                },
+                              );
+                            }).toList() ??
+                            [],
+                      ).animate().fadeIn(duration: 500.ms, delay: 1100.ms);
+                    })
                   ],
                 ),
               ),

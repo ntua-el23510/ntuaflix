@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ntuaflix/shared/models/principal.dart';
+
 class Person {
   final String nconst;
   final String primaryName;
@@ -8,6 +10,7 @@ class Person {
   final String primaryProfession;
   final String knownForTitles;
   final String? imgUrlAsset;
+  List<Principal>? principals;
 
   Person({
     required this.nconst,
@@ -17,6 +20,7 @@ class Person {
     required this.primaryProfession,
     required this.knownForTitles,
     required this.imgUrlAsset,
+    required this.principals,
   });
 
   Person copyWith({
@@ -27,6 +31,7 @@ class Person {
     String? primaryProfession,
     String? knownForTitles,
     String? imgUrlAsset,
+    List<Principal>? principals,
   }) =>
       Person(
         nconst: nconst ?? this.nconst,
@@ -36,6 +41,7 @@ class Person {
         primaryProfession: primaryProfession ?? this.primaryProfession,
         knownForTitles: knownForTitles ?? this.knownForTitles,
         imgUrlAsset: imgUrlAsset ?? this.imgUrlAsset,
+        principals: principals ?? this.principals,
       );
 
   factory Person.fromJson(String str) => Person.fromMap(json.decode(str));
@@ -49,6 +55,11 @@ class Person {
         deathYear: json["deathYear"],
         primaryProfession: json["primaryProfession"],
         knownForTitles: json["knownForTitles"],
+        principals: json['principals'] != null
+            ? List<Principal>.from((json['principals'] as Iterable?)
+                    ?.map((model) => Principal.fromMap(model)) ??
+                List<Principal>.empty(growable: true))
+            : null,
         imgUrlAsset: (json["img_url_asset"] as String?)?.isNotEmpty ?? false
             ? json["img_url_asset"]
             : null,

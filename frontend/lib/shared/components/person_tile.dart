@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ntuaflix/shared/extensions/string_extension.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
-import 'package:ntuaflix/shared/models/principal.dart';
+import 'package:ntuaflix/shared/models/person.dart';
+import 'package:ntuaflix/views/person_page.dart';
 
-class PrincipalTile extends StatelessWidget {
-  final Principal principal;
+class PersonTile extends StatelessWidget {
+  final Person person;
   final int index;
   final bool actionEnabled;
-  const PrincipalTile(
+  const PersonTile(
       {super.key,
-      required this.principal,
+      required this.person,
       required this.index,
       this.actionEnabled = true});
 
@@ -28,7 +30,7 @@ class PrincipalTile extends StatelessWidget {
               AspectRatio(
                 aspectRatio: 5 / 7,
                 child: Hero(
-                  tag: "Principal:${principal.nconst}",
+                  tag: "person:${person.nconst}",
                   child: Container(
                     decoration: BoxDecoration(
                         boxShadow: [
@@ -39,14 +41,10 @@ class PrincipalTile extends StatelessWidget {
                               offset: const Offset(5, 5))
                         ],
                         borderRadius: BorderRadius.circular(18),
-                        image: (principal.person?.imgUrlAsset ??
-                                    principal.imgUrlAsset) !=
-                                null
+                        image: (person.imgUrlAsset) != null
                             ? DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage((principal
-                                            .person?.imgUrlAsset ??
-                                        principal.imgUrlAsset)!
+                                image: NetworkImage(person.imgUrlAsset!
                                     .replaceAll("{width_variable}", "w500")))
                             : const DecorationImage(
                                 fit: BoxFit.cover,
@@ -62,7 +60,11 @@ class PrincipalTile extends StatelessWidget {
                                 )),
                                 padding: const MaterialStatePropertyAll(
                                     EdgeInsets.zero)),
-                            onPressed: () {},
+                            onPressed: () {
+                              context.pushNamed(PersonPage.route,
+                                  pathParameters: {'id': person.nconst},
+                                  extra: person);
+                            },
                             child: const SizedBox.shrink(),
                           )
                         : null,
@@ -77,13 +79,16 @@ class PrincipalTile extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          principal.person?.primaryName ?? "",
+                          person.primaryName,
                           style: context.theme.appTypos.title,
                           textAlign: TextAlign.center,
                           maxLines: 2,
                         ),
                         Text(
-                          principal.category.capitalize(),
+                          person.primaryProfession
+                              .split(",")
+                              .map((e) => e.replaceAll("_", " ").capitalize())
+                              .join(", "),
                           style: context.theme.appTypos.title.copyWith(
                               fontSize: 15, fontWeight: FontWeight.normal),
                           textAlign: TextAlign.center,

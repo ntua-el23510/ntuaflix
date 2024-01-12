@@ -61,7 +61,7 @@ class Principal {
         job: json["job"],
         characters: json["characters"],
         imgUrlAsset: json["img_url_asset"],
-        person: Person.fromMap(json["person"]),
+        person: json["person"] != null ? Person.fromMap(json["person"]) : null,
       );
 
   Map<String, dynamic> toMap() => {

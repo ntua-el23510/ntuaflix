@@ -62,7 +62,7 @@ class MovieTile extends StatelessWidget {
                                 padding: const MaterialStatePropertyAll(
                                     EdgeInsets.zero)),
                             onPressed: () {
-                              context.goNamed(MoviePage.route,
+                              context.pushNamed(MoviePage.route,
                                   pathParameters: {'id': movie.tconst},
                                   extra: movie);
                             },

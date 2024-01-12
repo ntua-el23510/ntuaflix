@@ -9,6 +9,5 @@ part of 'env.dart';
 // coverage:ignore-file
 // ignore_for_file: type=lint
 final class _AppEnv {
-  static const String API_URL =
-      'https://przystasz.skni.edu.pl/api/ntuaflix_api';
+  static const String API_URL = 'http://kni.prz.edu.pl:47474/api/ntuaflix_api';
 }
