@@ -3,12 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:ntuaflix/shared/api_client.dart';
 import 'package:ntuaflix/shared/blocs/auth/auth_bloc.dart';
+import 'package:ntuaflix/shared/components/button.dart';
 import 'package:ntuaflix/shared/components/default_view.dart';
+import 'package:ntuaflix/shared/components/form/form.dart';
+import 'package:ntuaflix/shared/components/form/form_fields.dart';
 import 'package:ntuaflix/shared/components/movie_tile.dart';
 import 'package:ntuaflix/shared/components/person_tile.dart';
+import 'package:ntuaflix/shared/extensions/form_extension.dart';
 import 'package:ntuaflix/shared/models/user.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:ntuaflix/shared/extensions/theme_extenstion.dart';
@@ -32,6 +37,8 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
+  final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
+
   Future<Movie> loadMovie() async {
     if (_detailedMovie != null) return _detailedMovie!;
     var response = await AppAPIClient().client.get("/movies/${widget.movieId}");
@@ -345,7 +352,205 @@ class _MoviePageState extends State<MoviePage> {
                                   ))
                               .toList() ??
                           [],
-                    ).animate().fadeIn(duration: 500.ms, delay: 1100.ms)
+                    ).animate().fadeIn(duration: 500.ms, delay: 1100.ms),
+                    const CategoryDivider(text: "Reviews")
+                        .animate()
+                        .fadeIn(duration: 500.ms, delay: 1300.ms),
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is Authorized) {
+                          return Builder(builder: (context) {
+                            double _rating = 5.0;
+                            return Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: context.theme.appColors.secondary
+                                      .withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: AppFormBuilder(
+                                  formKey: formKey,
+                                  child: (appFormState) {
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating: _rating,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          itemCount: 10,
+                                          glow: false,
+                                          itemSize: 20,
+                                          itemPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 4.0),
+                                          itemBuilder: (context, _) =>
+                                              const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            _rating = rating;
+                                          },
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        AppTextField(
+                                          // expands: true,
+                                          label: "Your review",
+                                          name: "review",
+                                          validator: (string) =>
+                                              InputValidators.isNotNull(string),
+                                        ),
+                                        Center(
+                                          child: AppButton(
+                                            text: "Submit",
+                                            onPressed: () async {
+                                              formKey.setLoading();
+                                              var response = await AppAPIClient()
+                                                  .client
+                                                  .post(
+                                                      "/movies/${movie.tconst}/add-rating",
+                                                      data: {
+                                                    "rating": _rating,
+                                                    "review": formKey
+                                                        .currentState
+                                                        ?.instantValue["review"]
+                                                  });
+                                              Movie _movie = Movie.fromMap(
+                                                  (response.data["data"]
+                                                      as dynamic));
+
+                                              setState(() {
+                                                _detailedMovie = _movie;
+                                              });
+
+                                              formKey.reset();
+                                              formKey.setSuccess();
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            )
+                                .animate()
+                                .fadeIn(duration: 500.ms, delay: 1000.ms)
+                                .slideY(
+                                    delay: 1000.ms,
+                                    begin: 2,
+                                    duration: 500.ms,
+                                    curve: Curves.easeOutBack);
+                          });
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    ...movie.reviews
+                        .map((e) => Builder(builder: (context) {
+                              var index = movie.reviews.indexOf(e);
+                              return Container(
+                                width: double.infinity,
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                    color: context.theme.appColors.secondary
+                                        .withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Builder(builder: (context) {
+                                        var rating = e.rating;
+                                        return Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5.0),
+                                              child: Transform.translate(
+                                                offset: const Offset(0, 1),
+                                                child: Text(
+                                                  rating.toStringAsFixed(1),
+                                                  style: context
+                                                      .theme.appTypos.body,
+                                                )
+                                                    .animate()
+                                                    .fadeIn(
+                                                        duration: 500.ms,
+                                                        delay: 200.ms)
+                                                    .slideY(
+                                                        delay: 200.ms,
+                                                        begin: 2,
+                                                        duration: 500.ms,
+                                                        curve:
+                                                            Curves.easeOutBack),
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: RatingBarIndicator(
+                                                  rating: rating.toDouble(),
+                                                  itemSize: 20,
+                                                  unratedColor: context
+                                                      .theme.appColors.primary
+                                                      .withOpacity(0.3),
+                                                  itemCount: 10,
+                                                  itemBuilder:
+                                                      (context, index) => Wrap(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.star,
+                                                                color: context
+                                                                    .theme
+                                                                    .appColors
+                                                                    .primary,
+                                                              )
+                                                            ],
+                                                          )),
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        e.reviev,
+                                        style: context.theme.appTypos.body,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                                  .animate()
+                                  .fadeIn(
+                                      duration: 500.ms,
+                                      delay: (1000 + index * 50).ms)
+                                  .slideY(
+                                      delay: (1000 + index * 50).ms,
+                                      begin: 2,
+                                      duration: 500.ms,
+                                      curve: Curves.easeOutBack);
+                            }))
+                        .toList()
                   ],
                 ),
               ),

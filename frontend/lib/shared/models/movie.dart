@@ -14,6 +14,7 @@ class Movie {
   String? imgUrlAsset;
   double? rating;
   List<Principal>? principals;
+  List<Review> reviews;
 
   Movie({
     required this.tconst,
@@ -27,6 +28,7 @@ class Movie {
     required this.imgUrlAsset,
     required this.rating,
     required this.principals,
+    required this.reviews,
   });
 
   factory Movie.fromJson(String str) => Movie.fromMap(json.decode(str));
@@ -46,9 +48,30 @@ class Movie {
                     ?.map((model) => Principal.fromMap(model)) ??
                 List<Principal>.empty(growable: true))
             : null,
+        // reviews: [],
+        reviews: json['reviews'] != null
+            ? List<Review>.from((json['reviews'] as Iterable?)
+                    ?.map((model) => Review.fromMap(model)) ??
+                List<Review>.empty(growable: true))
+            : List<Review>.empty(growable: true),
         rating:
             json["rating"] != null && json["rating"]["averageRating"] != null
                 ? double.tryParse(json["rating"]["averageRating"])
                 : null,
       );
+}
+
+class Review {
+  int rating;
+  String reviev;
+
+  Review({
+    required this.rating,
+    required this.reviev,
+  });
+
+  factory Review.fromJson(String str) => Review.fromMap(json.decode(str));
+
+  factory Review.fromMap(Map<String, dynamic> json) =>
+      Review(rating: json["rating"], reviev: json["review"]);
 }
