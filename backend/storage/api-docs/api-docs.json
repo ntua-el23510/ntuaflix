@@ -1,0 +1,593 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger Ntuaflix",
+        "description": "This is a Ntuaflix server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "el23510@mail.ntua.gr"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://192.168.2.25:8000/api/ntuaflix_api",
+            "description": "Ntuaflix API Server"
+        }
+    ],
+    "paths": {
+        "/movies/get-started-movies": {
+            "get": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get list of movies",
+                "description": "Returns a 10 random movies",
+                "operationId": "getRandomMovies",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/movies/{movie}": {
+            "get": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Find movie by ID",
+                "description": "Returns a single movie",
+                "operationId": "getMovieById",
+                "parameters": [
+                    {
+                        "name": "movie",
+                        "in": "path",
+                        "description": "ID of movie to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Movie"
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Movie"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movie not found"
+                    }
+                }
+            }
+        },
+        "/people/{person}": {
+            "get": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Find person by ID",
+                "description": "Returns a single person",
+                "operationId": "getPersonById",
+                "parameters": [
+                    {
+                        "name": "person",
+                        "in": "path",
+                        "description": "ID of person to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Person not found"
+                    }
+                }
+            }
+        },
+        "/principals/{principal}": {
+            "get": {
+                "tags": [
+                    "Principals"
+                ],
+                "summary": "Find principal by ID",
+                "description": "Returns a single principal",
+                "operationId": "getPrincipalById",
+                "parameters": [
+                    {
+                        "name": "principal",
+                        "in": "path",
+                        "description": "ID of principal to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Principal not found"
+                    }
+                }
+            }
+        },
+        "/searchbar": {
+            "get": {
+                "summary": "Searchbar",
+                "description": "Search Media, People and Principals",
+                "operationId": "searchbar",
+                "parameters": [
+                    {
+                        "name": "searchPart",
+                        "in": "query",
+                        "description": "Searching for movies, people, principals based on typed phrase",
+                        "required": true,
+                        "explode": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Authenticate user and generate Sanctum token",
+                "operationId": "ca7031a7fc629ca8f247dded52b768a0",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "User's password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Crew": {
+                "title": "Crew model",
+                "description": "Crew model",
+                "required": [
+                    "tconst"
+                ],
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "string",
+                        "format": "int32"
+                    },
+                    "tconst": {
+                        "title": "tconst",
+                        "description": "tconst",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "directors": {
+                        "title": "directors",
+                        "description": "directors",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "writers": {
+                        "title": "writers",
+                        "description": "writers",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Crew"
+                }
+            },
+            "Movie": {
+                "title": "Movie model",
+                "description": "Movie model",
+                "required": [
+                    "titleType",
+                    "primaryTitle",
+                    "originalTitle",
+                    "isAdult",
+                    "startYear"
+                ],
+                "properties": {
+                    "tconst": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "titleType": {
+                        "title": "titleType",
+                        "description": "titleType",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "primaryTitle": {
+                        "title": "primaryTitle",
+                        "description": "primaryTitle",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "originalTitle": {
+                        "title": "originalTitle",
+                        "description": "originalTitle",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "isAdult": {
+                        "title": "isAdult",
+                        "description": "is adult",
+                        "type": "boolean"
+                    },
+                    "startYear": {
+                        "title": "startYear",
+                        "description": "startYear",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "endYear": {
+                        "title": "endYear",
+                        "description": "endYear",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "runtimeMinutes": {
+                        "title": "runtimeMinutes",
+                        "description": "runtimeMinutes",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "genres": {
+                        "title": "genres",
+                        "description": "genres",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "img_url_asset": {
+                        "title": "img_url_asset",
+                        "description": "img_url_asset",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Movie"
+                }
+            },
+            "MovieAka": {
+                "title": "MovieAka model",
+                "description": "MovieAka model",
+                "required": [
+                    "titleId",
+                    "ordering",
+                    "title",
+                    "isOriginalTitle"
+                ],
+                "properties": {
+                    "titleId": {
+                        "title": "titleId",
+                        "description": "titleId",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "ordering": {
+                        "title": "ordering",
+                        "description": "ordering",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "title": "title",
+                        "description": "title",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "region": {
+                        "title": "region",
+                        "description": "region",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "language": {
+                        "title": "language",
+                        "description": "language",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "types": {
+                        "title": "types",
+                        "description": "types",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "isOriginalTitle": {
+                        "title": "isOriginalTitle",
+                        "description": "isOriginalTitle",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "MovieAka"
+                }
+            },
+            "Person": {
+                "title": "Person model",
+                "description": "Person model",
+                "required": [
+                    "primaryName",
+                    "primaryProfession",
+                    "knownForTitles",
+                    "img_url_asset"
+                ],
+                "properties": {
+                    "nconst": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "primaryName": {
+                        "title": "primaryName",
+                        "type": "string"
+                    },
+                    "birthYear": {
+                        "title": "birthYear",
+                        "type": "integer"
+                    },
+                    "deathYear": {
+                        "title": "deathYear",
+                        "type": "integer"
+                    },
+                    "primaryProfession": {
+                        "title": "primaryProfession",
+                        "type": "integer"
+                    },
+                    "knownForTitles": {
+                        "title": "knownForTitles",
+                        "type": "integer"
+                    },
+                    "img_url_asset": {
+                        "title": "img_url_asset",
+                        "type": "integer"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Person"
+                }
+            },
+            "Principal": {
+                "title": "Principal model",
+                "description": "Principal model",
+                "required": [
+                    "tconst",
+                    "nconst",
+                    "category"
+                ],
+                "properties": {
+                    "tconst": {
+                        "title": "tconst",
+                        "description": "tconst",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "nconst": {
+                        "title": "nconst",
+                        "description": "nconst",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "category": {
+                        "title": "category",
+                        "description": "category",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "job": {
+                        "title": "job",
+                        "description": "job",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "characters": {
+                        "title": "characters",
+                        "description": "characters",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "img_url_asset": {
+                        "title": "img_url_asset",
+                        "description": "img_url_asset",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Principal"
+                }
+            },
+            "Rating": {
+                "title": "Rating model",
+                "description": "Rating model",
+                "required": [
+                    "averageRating",
+                    "numVotes"
+                ],
+                "properties": {
+                    "tconst": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "averageRating": {
+                        "title": "averageRating",
+                        "description": "averageRating",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "numVotes": {
+                        "title": "numVotes",
+                        "description": "numVotes",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Rating"
+                }
+            },
+            "Review": {
+                "title": "Review model",
+                "description": "Review model",
+                "required": [
+                    "rating",
+                    "review"
+                ],
+                "properties": {
+                    "tconst": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "rating": {
+                        "title": "rating",
+                        "description": "rating",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "review": {
+                        "title": "review",
+                        "description": "review",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "Review"
+                }
+            },
+            "User": {
+                "title": "User model",
+                "description": "User model",
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "title": "name",
+                        "description": "name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "email",
+                        "description": "email",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "password",
+                        "description": "password",
+                        "type": "string"
+                    }
+                },
+                "type": "object",
+                "xml": {
+                    "name": "User"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Media",
+            "description": "Everything about Movies"
+        },
+        {
+            "name": "People",
+            "description": "Everything about Peoples"
+        },
+        {
+            "name": "Principals",
+            "description": "Everything about Principals"
+        },
+        {
+            "name": "Auth"
+        }
+    ]
+}
